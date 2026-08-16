@@ -449,7 +449,7 @@
                 name: '一个很大的湖',
                 icon: '水.png',
                 x: 22,
-                y: 72,
+                y: 63,
                 unlocked: true,
                 description: '一片很大的湖，看起来很深，钓鱼佬狂喜。',
                 resources: ['石头', '苔藓', '水草'],
@@ -460,8 +460,8 @@
                 id: 'windplain',
                 name: '附近最高最平缓的山',
                 icon: '地标.png',
-                x: 17,
-                y: 10,
+                x: 15,
+                y: 28,
                 unlocked: true,
                 description: '视野开阔。',
                 resources: ['雨林树', '苔藓', '藤蔓', '应该还会有别的但是我想不到了'],
@@ -472,8 +472,8 @@
                 id: 'frostspire',
                 name: '湖畔的出生点',
                 icon: '安全.png',
-                x: 40,
-                y: 74,
+                x: 41,
+                y: 64,
                 unlocked: true,
                 description: '常年薄雾笼罩的沼泽雨林，空气潮湿，地面铺满厚厚的苔藓。是新手探索的理想起点。',
                 resources: ['雨林树', '苔藓', '藤蔓'],
@@ -484,9 +484,9 @@
                 id: 'emberglow',
                 name: '一片沼泽地',
                 icon: '特殊.png',
-                x: 70,
-                y: 86,
-                unlocked: true,
+                x: 72,
+                y: 71,
+                unlocked: false,
                 description: '湖泊下游淤积形成的淡水沼泽，常年积水、土壤泥泞。腐殖质丰厚，大量腐生生物在此繁衍，生态循环里重要的分解区域。',
                 resources: ['沼泥树脂', '粘液', '腐败的……？'],
                 creatures: ['水蛇？', '白蚁？', '渡鸦？'],
@@ -797,7 +797,7 @@
             // ============================================================
             // 🧭 坐标拾取器（调试用）— 取消注释下方代码即可启用
             // ============================================================
-            /*
+            
             mapContainer.addEventListener('click', function(e) {
                 const rect = mapContainer.getBoundingClientRect();
                 const x = ((e.clientX - rect.left) / rect.width) * 100;
@@ -806,7 +806,7 @@
                 console.log(msg);
                 alert(msg);
             });
-            */
+            
 
             console.log('✅ 异世界地图加载完成！');
             console.log('📍 坐标范围 x, y 均为 0~100，分别表示从左/上开始的百分比。');

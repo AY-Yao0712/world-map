@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>您拨打的用户不在服务区 · 异世界地图</title>
+    <style>
+        /* ============================================================
+           📝 你可以改这里：整体配色、字体、弹窗样式
+           ============================================================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: '华文楷体', 'KaiTi', serif;
+            background: #1e2b32;
+            color: #2c3e3f;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ---- 顶部标题栏 ---- */
+        .header {
+            background: #2c3e3f;
+            color: #f0e6d3;
+            padding: 8px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+            border-bottom: 2px solid #5a6f6b;
+            z-index: 10;
+            flex-wrap: wrap;
+            gap: 6px 12px;
+        }
+        .header h1 {
+            font-size: 1.2rem;
+            font-weight: 400;
+            letter-spacing: 2px;
+            background: rgba(255, 255, 255, 0.06);
+            padding: 4px 14px;
+            border-radius: 30px;
+            border-left: 3px solid #b8a07c;
+            white-space: nowrap;
+        }
+        .header .search-box {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .header .search-box input {
+            padding: 6px 12px;
+            border-radius: 24px;
+            border: none;
+            background: #f0ebe1;
+            font-size: 0.9rem;
+            width: 180px;
+            outline: 1px solid #7a8f8a;
+            transition: 0.2s;
+        }
+        .header .search-box input:focus {
+            outline: 2px solid #b8a07c;
+            background: #fffcf5;
+        }
+        .header .search-box button {
+            padding: 6px 14px;
+            border: none;
+            border-radius: 24px;
+            background: #5a6f6b;
+            color: #f0e6d3;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.15s;
+            font-size: 0.85rem;
+        }
+        .header .search-box button:hover {
+            background: #7a8f8a;
+        }
+        .header .search-box .clear-btn {
+            background: #4a4f4a;
+        }
+        .header .search-box .clear-btn:hover {
+            background: #6a6f6a;
+        }
+
+        /* ---- 主体布局：侧边栏 + 地图 ---- */
+        .main-container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* 侧边栏 */
+        .sidebar {
+            width: 220px;
+            background: #f2ede4;
+            border-right: 2px solid #b8a07c;
+            overflow-y: auto;
+            flex-shrink: 0;
+            padding: 12px 10px;
+            transition: transform 0.25s ease;
+            z-index: 5;
+            box-shadow: 2px 0 12px rgba(0,0,0,0.1);
+        }
+        .sidebar h3 {
+            font-size: 0.95rem;
+            color: #4a5a4a;
+            border-bottom: 1px dashed #b8a07c;
+            padding-bottom: 6px;
+            margin-bottom: 12px;
+            letter-spacing: 2px;
+        }
+        .sidebar .region-item {
+            background: #fcf8f0;
+            margin-bottom: 6px;
+            padding: 6px 12px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            border: 1px solid transparent;
+            transition: 0.1s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+        }
+        .sidebar .region-item:hover {
+            background: #e8dfd0;
+            border-color: #b8a07c;
+            transform: translateX(4px);
+        }
+        .sidebar .region-item .badge {
+            font-size: 0.7rem;
+            background: #4a5a4a;
+            color: #f0ebe1;
+            border-radius: 30px;
+            padding: 0 8px;
+            line-height: 1.6;
+            margin-left: auto;
+        }
+
+        /* ---- 地图容器 ---- */
+        .map-wrapper {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            background: #2d3e3a;
+            cursor: grab;
+            touch-action: none;
+        }
+        .map-wrapper:active {
+            cursor: grabbing;
+        }
+
+        /* 地图图片容器 — 使用背景图方式，彻底解决 contain 偏移问题 */
+        #mapContainer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transform-origin: 0 0;
+            will-change: transform;
+            background-image: url('map1.png');
+            background-size: 100% 100%;  /* 填满容器，点位坐标直接用百分比 */
+            background-position: 0 0;
+            background-repeat: no-repeat;
+        }
+
+        /* ---- 点位标记 ---- */
+        .marker {
+            position: absolute;
+            transform: translate(-50%, -50%);
+            width: 32px;
+            height: 32px;
+            cursor: pointer;
+            z-index: 20;
+            transition: transform 0.1s, filter 0.15s;
+            pointer-events: auto;
+        }
+        .marker:hover {
+            transform: translate(-50%, -50%) scale(1.25);
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.7));
+            z-index: 30;
+        }
+        .marker img {
+            width: 100%;
+            height: 100%;
+            display: block;
+            pointer-events: none;
+        }
+
+        /* ---- 弹窗 (modal) ---- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(2px);
+            z-index: 999;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            pointer-events: auto;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-box {
+            position: relative;
+            max-width: 520px;
+            width: 90%;
+            max-height: 80vh;
+            background: #fcf8f0;
+            border-radius: 24px 8px 24px 8px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5), 0 0 0 2px #dacbaa inset;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            animation: modalFade 0.25s ease;
+        }
+        @keyframes modalFade {
+            0% { opacity: 0.6; transform: scale(0.92) translateY(10px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .modal-header {
+            background: #dacbaa;
+            padding: 14px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #b8a07c;
+            flex-shrink: 0;
+        }
+        .modal-header h2 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #2c3e3f;
+            letter-spacing: 1px;
+        }
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: #4a3f32;
+            line-height: 1;
+            padding: 0 6px;
+            transition: 0.15s;
+        }
+        .modal-close:hover {
+            transform: rotate(90deg);
+            color: #a04030;
+        }
+
+        .modal-body {
+            padding: 18px 22px 22px;
+            overflow-y: auto;
+            flex: 1;
+        }
+        .modal-body .desc {
+            font-size: 0.98rem;
+            line-height: 1.6;
+            margin-bottom: 14px;
+            color: #2c3e3f;
+        }
+        .modal-body .section-title {
+            font-weight: 600;
+            margin-top: 12px;
+            margin-bottom: 4px;
+            color: #4a5a3a;
+            border-left: 4px solid #b8a07c;
+            padding-left: 10px;
+            font-size: 0.95rem;
+        }
+        .modal-body .tag-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px 10px;
+            margin: 4px 0 8px 14px;
+        }
+        .modal-body .tag-list span {
+            background: #e8dfd0;
+            padding: 2px 12px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            color: #2c3e3f;
+        }
+        .modal-body .danger-level {
+            display: inline-block;
+            background: #4a5a4a;
+            color: #f0ebe1;
+            padding: 2px 14px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            margin-top: 6px;
+        }
+
+        /* ---- 地图控制按钮 ---- */
+        .map-controls {
+            position: absolute;
+            bottom: 24px;
+            right: 24px;
+            z-index: 40;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .map-controls button {
+            width: 42px;
+            height: 42px;
+            border: none;
+            border-radius: 40px;
+            background: rgba(44, 62, 63, 0.8);
+            backdrop-filter: blur(4px);
+            color: #f0ebe1;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            transition: 0.15s;
+            border: 1px solid #7a8f8a;
+        }
+        .map-controls button:hover {
+            background: #5a6f6b;
+            transform: scale(1.05);
+        }
+        .map-controls button:active {
+            transform: scale(0.94);
+        }
+
+        /* ---- 移动端侧边栏切换 ---- */
+        .sidebar-toggle {
+            display: none;
+            background: #2c3e3f;
+            color: #f0ebe1;
+            border: none;
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            border: 1px solid #5a6f6b;
+        }
+
+        @media (max-width: 700px) {
+            .sidebar {
+                position: absolute;
+                top: 0;
+                left: 0;
+                height: 100%;
+                transform: translateX(-110%);
+                width: 200px;
+                z-index: 50;
+                background: #f2ede4;
+                box-shadow: 4px 0 20px rgba(0,0,0,0.3);
+                border-right: 2px solid #b8a07c;
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            .sidebar-toggle {
+                display: inline-block;
+            }
+            .header h1 {
+                font-size: 1rem;
+                white-space: normal;
+            }
+            .header .search-box input {
+                width: 120px;
+            }
+            .modal-box {
+                max-width: 96%;
+                max-height: 90vh;
+            }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+        .text-muted {
+            color: #5a6f6b;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1>📡 您拨打的用户不在服务区</h1>
+        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+            <button class="sidebar-toggle" id="sidebarToggle">📋 目录</button>
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="搜索资源 / 区域 / 生物..." />
+                <button id="searchBtn">🔍 搜索</button>
+                <button class="clear-btn" id="clearSearchBtn">✕ 清除</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <aside class="sidebar" id="sidebar">
+            <h3>📍 区域名录</h3>
+            <div id="regionList"></div>
+            <div style="margin-top: 20px; font-size: 0.75rem; color: #7a8f8a; border-top: 1px dashed #ccc; padding-top: 10px;">
+                🖱️ 点击区域名跳转<br>
+                🔍 搜索可筛选高亮
+            </div>
+        </aside>
+
+        <div class="map-wrapper" id="mapWrapper">
+            <div id="mapContainer">
+                <!-- 地图图片已用 background-image 方式加载，不需要 img 标签 -->
+            </div>
+            <div class="map-controls">
+                <button id="zoomInBtn">➕</button>
+                <button id="zoomOutBtn">➖</button>
+                <button id="resetViewBtn">⟲</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 弹窗 -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-box" id="modalBox">
+            <div class="modal-header">
+                <h2 id="modalTitle">区域名称</h2>
+                <button class="modal-close" id="modalCloseBtn">✕</button>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+        </div>
+    </div>
+
+    <script>
+        // ================================================================
+        // 📝 区域数据 — 增、删、改都在这里
+        // ================================================================
+        const regionsData = [
+            {
+                id: 'mistwood',
+                name: '一个很大的湖',
+                icon: 'water.png',
+                x: 22,
+                y: 72,
+                unlocked: true,
+                description: '一片很大的湖，看起来很深，钓鱼佬狂喜。',
+                resources: ['石头', '苔藓', '水草'],
+                creatures: ['鱼', '很多鱼', '不同品种的鱼', '水元素'],
+                dangerLevel: 3
+            },
+            {
+                id: 'windplain',
+                name: '附近最高最平缓的山',
+                icon: 'sign.png',
+                x: 17,
+                y: 10,
+                unlocked: true,
+                description: '视野开阔。',
+                resources: ['雨林树', '苔藓', '藤蔓', '应该还会有别的但是我想不到了'],
+                creatures: ['待定'],
+                dangerLevel: 4
+            },
+            {
+                id: 'frostspire',
+                name: '湖畔的出生点',
+                icon: 'safe.png',
+                x: 40,
+                y: 74,
+                unlocked: true,
+                description: '常年薄雾笼罩的沼泽雨林，空气潮湿，地面铺满厚厚的苔藓。是新手探索的理想起点。',
+                resources: ['雨林树', '苔藓', '藤蔓'],
+                creatures: ['青蛙？', '蛇？', '水元素'],
+                dangerLevel: 2
+            },
+            {
+                id: 'emberglow',
+                name: '一片沼泽地',
+                icon: 'special.png',
+                x: 70,
+                y: 86,
+                unlocked: true,
+                description: '湖泊下游淤积形成的淡水沼泽，常年积水、土壤泥泞。腐殖质丰厚，大量腐生生物在此繁衍，生态循环里重要的分解区域。',
+                resources: ['沼泥树脂', '粘液', '腐败的……？'],
+                creatures: ['水蛇？', '白蚁？', '渡鸦？'],
+                dangerLevel: 4
+            },
+            {
+                id: 'duskshore',
+                name: '暮光群岛',
+                icon: 'sign.png',
+                x: 15,
+                y: 82,
+                unlocked: false,
+                description: '1111111',
+                resources: ['星辉珍珠', '珊瑚符文石', '幻光水母触须'],
+                creatures: ['人鱼祭司', '礁石海蛇', '虹彩鹦鹉螺'],
+                dangerLevel: 3
+            }
+        ];
+
+        // ================================================================
+        // 以下代码为交互逻辑，你一般不需要修改
+        // ================================================================
+
+        const mapWrapper = document.getElementById('mapWrapper');
+        const mapContainer = document.getElementById('mapContainer');
+        const regionListEl = document.getElementById('regionList');
+        const modalOverlay = document.getElementById('modalOverlay');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalBody = document.getElementById('modalBody');
+        const modalCloseBtn = document.getElementById('modalCloseBtn');
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+        const clearSearchBtn = document.getElementById('clearSearchBtn');
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const sidebar = document.getElementById('sidebar');
+
+        let currentScale = 1;
+        let translateX = 0;
+        let translateY = 0;
+        let isDragging = false;
+        let dragStartX, dragStartY, dragStartTranslateX, dragStartTranslateY;
+        let highlightedIds = [];
+
+        function updateMapTransform() {
+            mapContainer.style.transform = `translate(${translateX}px, ${translateY}px) scale(${currentScale})`;
+        }
+
+        function resetView() {
+            currentScale = 1;
+            translateX = 0;
+            translateY = 0;
+            updateMapTransform();
+        }
+
+        function zoomIn() {
+            const newScale = Math.min(currentScale * 1.3, 5);
+            if (newScale !== currentScale) {
+                currentScale = newScale;
+                updateMapTransform();
+            }
+        }
+
+        function zoomOut() {
+            const newScale = Math.max(currentScale / 1.3, 0.3);
+            if (newScale !== currentScale) {
+                currentScale = newScale;
+                updateMapTransform();
+            }
+        }
+
+        function renderMarkers(highlightIds = []) {
+            document.querySelectorAll('.marker').forEach(el => el.remove());
+
+            let visibleRegions = regionsData.filter(r => r.unlocked !== false);
+            if (highlightIds && highlightIds.length > 0) {
+                visibleRegions = visibleRegions.filter(r => highlightIds.includes(r.id));
+            }
+
+            visibleRegions.forEach(region => {
+                const marker = document.createElement('div');
+                marker.className = 'marker';
+                marker.dataset.regionId = region.id;
+                marker.style.left = region.x + '%';
+                marker.style.top = region.y + '%';
+
+                const img = document.createElement('img');
+                img.src = region.icon || '标点1.png';
+                img.alt = region.name;
+                marker.appendChild(img);
+
+                marker.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    openModal(region.id);
+                });
+
+                mapContainer.appendChild(marker);
+            });
+
+            renderSidebar(highlightIds);
+        }
+
+        function renderSidebar(highlightIds = []) {
+            const visibleRegions = regionsData.filter(r => r.unlocked !== false);
+            if (visibleRegions.length === 0) {
+                regionListEl.innerHTML = '<div class="text-muted" style="padding: 12px;">暂无区域数据</div>';
+                return;
+            }
+
+            let html = '';
+            visibleRegions.forEach(region => {
+                const isHighlight = highlightIds.includes(region.id);
+                const bgStyle = isHighlight ? 'background: #dacbaa; border-color: #8a7a5a;' : '';
+                html += `
+                    <div class="region-item" data-id="${region.id}" style="${bgStyle}">
+                        <span>${region.name}</span>
+                        <span class="badge">${region.dangerLevel || '?'}</span>
+                    </div>
+                `;
+            });
+            regionListEl.innerHTML = html;
+
+            document.querySelectorAll('.region-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    const id = item.dataset.id;
+                    const region = regionsData.find(r => r.id === id);
+                    if (region) {
+                        resetView();
+                        openModal(id);
+                        document.querySelectorAll('.region-item').forEach(el => {
+                            el.style.background = '';
+                            el.style.borderColor = 'transparent';
+                        });
+                        item.style.background = '#dacbaa';
+                        item.style.borderColor = '#8a7a5a';
+                        if (window.innerWidth <= 700) sidebar.classList.remove('open');
+                    }
+                });
+            });
+        }
+
+        function openModal(regionId) {
+            const region = regionsData.find(r => r.id === regionId);
+            if (!region) return;
+
+            modalTitle.textContent = region.name;
+            let html = `<div class="desc">${region.description || '暂无描述'}</div>`;
+
+            if (region.resources && region.resources.length > 0) {
+                html += `<div class="section-title">🌿 资源</div><div class="tag-list">`;
+                region.resources.forEach(r => { html += `<span>${r}</span>`; });
+                html += `</div>`;
+            }
+
+            if (region.creatures && region.creatures.length > 0) {
+                html += `<div class="section-title">🐾 生物</div><div class="tag-list">`;
+                region.creatures.forEach(c => { html += `<span>${c}</span>`; });
+                html += `</div>`;
+            }
+
+            if (region.dangerLevel) {
+                const stars = '★'.repeat(region.dangerLevel) + '☆'.repeat(5 - region.dangerLevel);
+                html += `<div class="danger-level">⚠️ 危险等级 ${stars} (${region.dangerLevel}/5)</div>`;
+            }
+
+            modalBody.innerHTML = html;
+            modalOverlay.classList.add('active');
+        }
+
+        function closeModal() {
+            modalOverlay.classList.remove('active');
+        }
+
+        function performSearch() {
+            const keyword = searchInput.value.trim().toLowerCase();
+            if (!keyword) {
+                highlightedIds = [];
+                renderMarkers([]);
+                renderSidebar([]);
+                return;
+            }
+
+            const matchedIds = [];
+            regionsData.forEach(region => {
+                const nameMatch = region.name.toLowerCase().includes(keyword);
+                const resMatch = region.resources && region.resources.some(r => r.toLowerCase().includes(keyword));
+                const creMatch = region.creatures && region.creatures.some(c => c.toLowerCase().includes(keyword));
+                if (nameMatch || resMatch || creMatch) matchedIds.push(region.id);
+            });
+
+            if (matchedIds.length === 0) {
+                highlightedIds = [];
+                renderMarkers([]);
+                renderSidebar([]);
+                alert('🔍 未找到与 "' + keyword + '" 相关的区域、资源或生物。');
+                return;
+            }
+
+            highlightedIds = matchedIds;
+            renderMarkers(matchedIds);
+            renderSidebar(matchedIds);
+
+            const firstMatch = regionsData.find(r => r.id === matchedIds[0]);
+            if (firstMatch) openModal(firstMatch.id);
+        }
+
+        function clearSearch() {
+            searchInput.value = '';
+            highlightedIds = [];
+            renderMarkers([]);
+            renderSidebar([]);
+            closeModal();
+        }
+
+        // ---- 拖拽 ----
+        function onDragStart(e) {
+            e.preventDefault();
+            const point = e.touches ? e.touches[0] : e;
+            isDragging = true;
+            dragStartX = point.clientX;
+            dragStartY = point.clientY;
+            dragStartTranslateX = translateX;
+            dragStartTranslateY = translateY;
+            mapWrapper.style.cursor = 'grabbing';
+        }
+
+        function onDragMove(e) {
+            if (!isDragging) return;
+            e.preventDefault();
+            const point = e.touches ? e.touches[0] : e;
+            const dx = point.clientX - dragStartX;
+            const dy = point.clientY - dragStartY;
+            translateX = dragStartTranslateX + dx;
+            translateY = dragStartTranslateY + dy;
+            updateMapTransform();
+        }
+
+        function onDragEnd() {
+            if (isDragging) {
+                isDragging = false;
+                mapWrapper.style.cursor = 'grab';
+            }
+        }
+
+        function onWheel(e) {
+            e.preventDefault();
+            const delta = e.deltaY > 0 ? 0.9 : 1.1;
+            const newScale = Math.min(Math.max(currentScale * delta, 0.3), 5);
+            if (newScale !== currentScale) {
+                currentScale = newScale;
+                updateMapTransform();
+            }
+        }
+
+        // ---- 初始化 ----
+        function init() {
+            // 确保地图背景图加载成功
+            const bgImage = new Image();
+            bgImage.src = 'map1.png';
+            bgImage.onerror = function() {
+                mapContainer.style.background = '#2d3e3a';
+                mapContainer.innerHTML = `
+                    <div style="display:flex;align-items:center;justify-content:center;height:100%;color:#f0ebe1;font-size:1.4rem;text-align:center;padding:20px;">
+                        🗺️ 请将地图图片（map1.png）放在同目录下
+                    </div>
+                `;
+            };
+
+            renderMarkers([]);
+            renderSidebar([]);
+            resetView();
+
+            // 事件绑定
+            mapWrapper.addEventListener('mousedown', onDragStart);
+            window.addEventListener('mousemove', onDragMove);
+            window.addEventListener('mouseup', onDragEnd);
+            mapWrapper.addEventListener('touchstart', onDragStart, { passive: false });
+            window.addEventListener('touchmove', onDragMove, { passive: false });
+            window.addEventListener('touchend', onDragEnd, { passive: false });
+            mapWrapper.addEventListener('wheel', onWheel, { passive: false });
+
+            document.getElementById('zoomInBtn').addEventListener('click', zoomIn);
+            document.getElementById('zoomOutBtn').addEventListener('click', zoomOut);
+            document.getElementById('resetViewBtn').addEventListener('click', resetView);
+
+            modalCloseBtn.addEventListener('click', closeModal);
+            modalOverlay.addEventListener('click', (e) => {
+                if (e.target === modalOverlay) closeModal();
+            });
+
+            searchBtn.addEventListener('click', performSearch);
+            searchInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') performSearch();
+            });
+            clearSearchBtn.addEventListener('click', clearSearch);
+
+            sidebarToggle.addEventListener('click', () => {
+                sidebar.classList.toggle('open');
+            });
+
+            document.addEventListener('click', (e) => {
+                if (window.innerWidth <= 700) {
+                    if (!sidebar.contains(e.target) && e.target !== sidebarToggle) {
+                        sidebar.classList.remove('open');
+                    }
+                }
+            });
+
+            // ============================================================
+            // 🧭 坐标拾取器（调试用）— 取消注释下方代码即可启用
+            // ============================================================
+            /*
+            mapContainer.addEventListener('click', function(e) {
+                const rect = mapContainer.getBoundingClientRect();
+                const x = ((e.clientX - rect.left) / rect.width) * 100;
+                const y = ((e.clientY - rect.top) / rect.height) * 100;
+                const msg = `📍 点击位置坐标:\nx = ${x.toFixed(1)}\ny = ${y.toFixed(1)}`;
+                console.log(msg);
+                alert(msg);
+            });
+            */
+
+            console.log('✅ 异世界地图加载完成！');
+            console.log('📍 坐标范围 x, y 均为 0~100，分别表示从左/上开始的百分比。');
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
+        }
+    </script>
+</body>
+</html>

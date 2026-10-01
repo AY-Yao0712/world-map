@@ -173,7 +173,7 @@
             height: 100%;
             transform-origin: 0 0;
             will-change: transform;
-            background-image: url('map1.png');
+            background-image: url('map/map1.png');
             background-size: 100% 100%;  /* 填满容器，点位坐标直接用百分比 */
             background-position: 0 0;
             background-repeat: no-repeat;
@@ -474,7 +474,7 @@
             {
                 id: 'mistwood',
                 name: '一个很大的湖',
-                icon: 'water.png',
+                icon: 'icon/water.png',
                 x: 22,
                 y: 72,
                 unlocked: true,
@@ -486,7 +486,7 @@
             {
                 id: 'windplain',
                 name: '附近最高最平缓的山',
-                icon: 'sign.png',
+                icon: 'icon/sign.png',
                 x: 17,
                 y: 10,
                 unlocked: true,
@@ -498,19 +498,19 @@
             {
                 id: 'frostspire',
                 name: '湖畔的出生点',
-                icon: 'safe.png',
+                icon: 'icon/safe.png',
                 x: 40,
                 y: 74,
                 unlocked: true,
                 description: '终年氤氲薄雾，空气高湿温热。地表覆盖厚层苔藓、淤积腐殖泥，林木临水丛生，河湖支流纵横交错。地形平缓，是新手探索的理想起点。',
-                resources: ['雨林树', '苔藓', '藤蔓'],
-                creatures: ['青蛙？', '蛇？', '水元素'],
-                dangerLevel: 2
+                resources: ['P0001', 'P0002', 'P0003'],
+                creatures: ['A0001？', 'A0002', 'A0003'],
+                dangerLevel: 1
             },
             {
                 id: 'emberglow',
                 name: '一片沼泽地',
-                icon: 'special.png',
+                icon: 'icon/special.png',
                 x: 70,
                 y: 86,
                 unlocked: true,
@@ -522,7 +522,7 @@
             {
                 id: 'duskshore',
                 name: '暮光群岛',
-                icon: 'sign.png',
+                icon: 'icon/sign.png',
                 x: 15,
                 y: 82,
                 unlocked: false,
@@ -600,7 +600,7 @@
                 marker.style.top = region.y + '%';
 
                 const img = document.createElement('img');
-                img.src = region.icon || '标点1.png';
+                img.src = region.icon || 'icon/sign.png';
                 img.alt = region.name;
                 marker.appendChild(img);
 
@@ -781,7 +781,7 @@
         function init() {
             // 确保地图背景图加载成功
             const bgImage = new Image();
-            bgImage.src = 'map1.png';
+            bgImage.src = 'map/map1.png';
             bgImage.onerror = function() {
                 mapContainer.style.background = '#2d3e3a';
                 mapContainer.innerHTML = `

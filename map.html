@@ -16,7 +16,7 @@
 
         body {
             font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
-    	    background: #f0f2f5;        /* 高德常用背景色 */
+            background: #f0f2f5;
             color: #1b2a3a;
             height: 100vh;
             overflow: hidden;
@@ -79,20 +79,20 @@
             transition: 0.15s;
             font-size: 0.85rem;
             border: 1px solid #d0d8e0;
-	}
-	.header .search-box button:hover {
+        }
+        .header .search-box button:hover {
             background: #eef2f7;
-	}
-	.header .search-box .clear-btn {
+        }
+        .header .search-box .clear-btn {
             background: #ffffff;
             color: #7a8a9a;
             border: 1px solid #d0d8e0;
-	}
-	.header .search-box .clear-btn:hover {
+        }
+        .header .search-box .clear-btn:hover {
             background: #f0f0f0;
-	}
+        }
 
-        /* ---- 主体布局：侧边栏 + 地图 ---- */
+        /* ---- 主体布局 ---- */
         .main-container {
             display: flex;
             flex: 1;
@@ -100,63 +100,62 @@
             position: relative;
         }
 
-        /* 侧边栏 — 高德风格 */
-	.sidebar {
-    		width: 220px;
-    		background: #f7f9fc;          /* 浅灰白底 */
-    		border-right: 1px solid #e8ecf0;
-    		overflow-y: auto;
-    		flex-shrink: 0;
-    		padding: 12px 10px;
-    		transition: transform 0.25s ease;
-    		z-index: 5;
-    		box-shadow: 2px 0 12px rgba(0,0,0,0.06);
-	}
-	.sidebar h3 {
-    		font-size: 0.95rem;
-    		color: #1b2a3a;
-    		border-bottom: 1px solid #e8ecf0;
-    		padding-bottom: 8px;
-    		margin-bottom: 12px;
-    		letter-spacing: 1px;
-    		font-weight: 600;
-	}
-	.sidebar .region-item {
-    		background: #ffffff;
-    		margin-bottom: 6px;
-    		padding: 8px 14px;
-    		border-radius: 12px;
-    		font-size: 0.85rem;
-    		cursor: pointer;
-    		border: 1px solid #e8ecf0;
-    		transition: 0.1s;
-    		display: flex;
-    		align-items: center;
-    		gap: 8px;
-    		box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-	}
-	.sidebar .region-item:hover {
-    		background: #eef2f7;
-    		border-color: #c0c8d4;
-    		transform: translateX(4px);
-	}
-	.sidebar .region-item .badge {
-    		font-size: 0.7rem;
-    		background: #e8ecf0;
-    		color: #4a5a6a;
-    		border-radius: 30px;
-    		padding: 0 10px;
-    		line-height: 1.8;
-    		margin-left: auto;
-	}
-
+        /* 侧边栏 */
+        .sidebar {
+            width: 220px;
+            background: #f7f9fc;
+            border-right: 1px solid #e8ecf0;
+            overflow-y: auto;
+            flex-shrink: 0;
+            padding: 12px 10px;
+            transition: transform 0.25s ease;
+            z-index: 5;
+            box-shadow: 2px 0 12px rgba(0,0,0,0.06);
+        }
+        .sidebar h3 {
+            font-size: 0.95rem;
+            color: #1b2a3a;
+            border-bottom: 1px solid #e8ecf0;
+            padding-bottom: 8px;
+            margin-bottom: 12px;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+        .sidebar .region-item {
+            background: #ffffff;
+            margin-bottom: 6px;
+            padding: 8px 14px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            border: 1px solid #e8ecf0;
+            transition: 0.1s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        }
+        .sidebar .region-item:hover {
+            background: #eef2f7;
+            border-color: #c0c8d4;
+            transform: translateX(4px);
+        }
+        .sidebar .region-item .badge {
+            font-size: 0.7rem;
+            background: #e8ecf0;
+            color: #4a5a6a;
+            border-radius: 30px;
+            padding: 0 10px;
+            line-height: 1.8;
+            margin-left: auto;
+        }
 
         /* ---- 地图容器 ---- */
         .map-wrapper {
             flex: 1;
             position: relative;
             overflow: hidden;
-            background: #f0f2f5;        /* 和 body 统一 */
+            background: #f0f2f5;
             cursor: grab;
             touch-action: none;
         }
@@ -164,19 +163,22 @@
             cursor: grabbing;
         }
 
-        /* 地图图片容器 — 使用背景图方式，彻底解决 contain 偏移问题 */
+        /* ✅ 地图拼图容器：尺寸由 JS 动态设置，不再是100% */
         #mapContainer {
             position: absolute;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
             transform-origin: 0 0;
             will-change: transform;
-            background-image: url('map/map1.png');
-            background-size: 100% 100%;  /* 填满容器，点位坐标直接用百分比 */
-            background-position: 0 0;
-            background-repeat: no-repeat;
+        }
+
+        /* ✅ 每张小地图的样式 */
+        .map-piece {
+            position: absolute;
+            display: block;
+            pointer-events: none;
+            user-select: none;
+            -webkit-user-drag: none;
         }
 
         /* ---- 点位标记 ---- */
@@ -202,7 +204,7 @@
             pointer-events: none;
         }
 
-        /* ---- 弹窗 (modal) ---- */
+        /* ---- 弹窗 ---- */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -215,12 +217,10 @@
             display: none;
             justify-content: center;
             align-items: center;
-            pointer-events: auto;
         }
         .modal-overlay.active {
             display: flex;
         }
-
         .modal-box {
             position: relative;
             max-width: 520px;
@@ -229,7 +229,6 @@
             background: #ffffff;
             border-radius: 24px;
             box-shadow: 0 12px 40px rgba(0,0,0,0.25);
-	    border: none;
             overflow: hidden;
             display: flex;
             flex-direction: column;
@@ -239,7 +238,6 @@
             0% { opacity: 0.6; transform: scale(0.92) translateY(10px); }
             100% { opacity: 1; transform: scale(1) translateY(0); }
         }
-
         .modal-header {
             background: #f5f7fa;
             padding: 14px 20px;
@@ -269,7 +267,6 @@
             transform: rotate(90deg);
             color: #a04030;
         }
-
         .modal-body {
             padding: 18px 22px 22px;
             overflow-y: auto;
@@ -312,23 +309,25 @@
             font-size: 0.8rem;
             margin-top: 6px;
         }
-	/* ---- 左上角指南针（纯装饰） ---- */
-	.compass-icon {
-    		position: absolute;
-    		top: 16px;
-    		left: 16px;
-    		z-index: 40;
-    		width: 44px;
-    		height: 44px;
-    		pointer-events: none;   /* 让点击穿透，不影响地图操作 */
-    		opacity: 0.85;
-    		filter: drop-shadow(0 2px 6px rgba(0,0,0,0.2));
-	}
-	.compass-icon img {
-    		width: 100%;
-    		height: 100%;
-    		display: block;
-	}
+
+        /* ---- 左上角指南针 ---- */
+        .compass-icon {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            z-index: 40;
+            width: 44px;
+            height: 44px;
+            pointer-events: none;
+            opacity: 0.85;
+            filter: drop-shadow(0 2px 6px rgba(0,0,0,0.2));
+        }
+        .compass-icon img {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
         /* ---- 地图控制按钮 ---- */
         .map-controls {
             position: absolute;
@@ -345,24 +344,23 @@
             border: none;
             border-radius: 40px;
             background: #ffffff;
-            backdrop-filter: blur(4px);
             color: #1b8cff;
             font-size: 1.2rem;
             cursor: pointer;
             box-shadow: 0 2px 8px rgba(0,0,0,0.15);
             transition: 0.15s;
-            border: 1px solid #7a8f8a;
+            border: 1px solid #d0d8e0;
             font-weight: bold;
         }
         .map-controls button:hover {
-            background: #5a6f6b;
+            background: #eef2f7;
             transform: scale(1.05);
         }
         .map-controls button:active {
             transform: scale(0.94);
         }
 
-        /* ---- 移动端侧边栏切换 ---- */
+        /* ---- 移动端 ---- */
         .sidebar-toggle {
             display: none;
             background: #2c3e3f;
@@ -374,20 +372,19 @@
             cursor: pointer;
             border: 1px solid #5a6f6b;
         }
-
         @media (max-width: 700px) {
             .sidebar {
-    		position: absolute;
-    		top: 0;
-    		left: 0;
-    		height: 100%;
-    		transform: translateX(-110%);
-    		width: 200px;
-    		z-index: 50;
-    		background: #f7f9fc;
-    		box-shadow: 4px 0 20px rgba(0,0,0,0.15);
-    		border-right: 1px solid #e8ecf0;
-	}
+                position: absolute;
+                top: 0;
+                left: 0;
+                height: 100%;
+                transform: translateX(-110%);
+                width: 200px;
+                z-index: 50;
+                background: #f7f9fc;
+                box-shadow: 4px 0 20px rgba(0,0,0,0.15);
+                border-right: 1px solid #e8ecf0;
+            }
             .sidebar.open {
                 transform: translateX(0);
             }
@@ -407,13 +404,8 @@
             }
         }
 
-        .hidden {
-            display: none !important;
-        }
-        .text-muted {
-            color: #5a6f6b;
-            font-size: 0.85rem;
-        }
+        .hidden { display: none !important; }
+        .text-muted { color: #5a6f6b; font-size: 0.85rem; }
     </style>
 </head>
 <body>
@@ -440,14 +432,14 @@
         </aside>
 
         <div class="map-wrapper" id="mapWrapper">
-    		<!-- 🧭 指南针（纯装饰，不旋转） -->
-    		<div class="compass-icon">
-        		<img src="compass.png" alt="指南针">
-    	</div>
-
-    	<div id="mapContainer">
-                <!-- 地图图片已用 background-image 方式加载，不需要 img 标签 -->
+            <!-- 🧭 指南针（纯装饰） -->
+            <div class="compass-icon">
+                <img src="compass.png" alt="指南针">
             </div>
+
+            <!-- ✅ 地图拼图容器（内容由 JS 自动填充） -->
+            <div id="mapContainer"></div>
+
             <div class="map-controls">
                 <button id="zoomInBtn">➕</button>
                 <button id="zoomOutBtn">➖</button>
@@ -468,15 +460,44 @@
 
     <script>
         // ================================================================
-        // 📝 区域数据 — 增、删、改都在这里
+        // 📝 【配置区 1】地图拼图 —— 以后加新图就在这里加一行
+        //    规则：
+        //    - 图1 的左上角永远是 (0, 0)
+        //    - 想在下方加图2：x 不变，y = 图1 的高度
+        //    - 想在右方加图3：x = 图1 的宽度，y 不变
+        //    - 想在左方加图4：x = 负数（图1宽度的负数），y 不变
+        //    - 想在上方加图5：x 不变，y = 负数（图1高度的负数）
+        // ================================================================
+        const mapPieces = [
+            {
+                file: 'map/map1.png',   // 图片路径
+                x: 0,                    // 左上角 X 坐标（像素）
+                y: 0,                    // 左上角 Y 坐标（像素）
+                width: 2388,             // 图片宽度（像素）
+                height: 1668             // 图片高度（像素）
+            },
+            {
+                file: 'map/map2.png',
+                x: 0,                  
+                y: 1610,               
+                width: 2388,           
+                height: 1668           
+            },
+        ];
+
+        // ================================================================
+        // 📝 【配置区 2】区域数据 —— 增、删、改都在这里
+        //    ⚠️ 坐标单位是像素（相对于整体大地图）
+        //    换算公式：像素X = 百分比 × 地图宽 ÷ 100
+        //             像素Y = 百分比 × 地图高 ÷ 100
         // ================================================================
         const regionsData = [
             {
                 id: 'mistwood',
                 name: '一个很大的湖',
                 icon: 'icon/water.png',
-                x: 22,
-                y: 72,
+                x: 525,      // 22% × 2388 ≈ 525
+                y: 1201,     // 72% × 1668 ≈ 1201
                 unlocked: true,
                 description: '一片很大的湖，看起来很深，钓鱼佬狂喜。',
                 resources: ['石头', '苔藓', '水草'],
@@ -487,11 +508,11 @@
                 id: 'windplain',
                 name: '附近最高最平缓的山',
                 icon: 'icon/sign.png',
-                x: 17,
-                y: 10,
+                x: 406,      // 17% × 2388 ≈ 406
+                y: 167,      // 10% × 1668 ≈ 167
                 unlocked: true,
                 description: '视野开阔。',
-                resources: ['雨林树', '苔藓', '藤蔓', '应该还会有别的但是我想不到了'],
+                resources: ['雨林树', '苔藓', '藤蔓'],
                 creatures: ['待定'],
                 dangerLevel: 4
             },
@@ -499,8 +520,8 @@
                 id: 'frostspire',
                 name: '湖畔的出生点',
                 icon: 'icon/safe.png',
-                x: 40,
-                y: 74,
+                x: 955,      // 40% × 2388 ≈ 955
+                y: 1234,     // 74% × 1668 ≈ 1234
                 unlocked: true,
                 description: '终年氤氲薄雾，空气高湿温热。地表覆盖厚层苔藓、淤积腐殖泥，林木临水丛生，河湖支流纵横交错。地形平缓，是新手探索的理想起点。',
                 resources: ['P0001', 'P0002', 'P0003'],
@@ -511,8 +532,8 @@
                 id: 'emberglow',
                 name: '一片沼泽地',
                 icon: 'icon/special.png',
-                x: 70,
-                y: 86,
+                x: 1672,     // 70% × 2388 ≈ 1672
+                y: 1434,     // 86% × 1668 ≈ 1434
                 unlocked: true,
                 description: '湖泊下游淤积形成的淡水沼泽，常年积水、土壤泥泞。腐殖质丰厚，大量腐生生物在此繁衍，生态循环里重要的分解区域。',
                 resources: ['沼泥树脂', '粘液', '腐败的……？'],
@@ -523,8 +544,8 @@
                 id: 'duskshore',
                 name: '暮光群岛',
                 icon: 'icon/sign.png',
-                x: 15,
-                y: 82,
+                x: 358,      // 15% × 2388 ≈ 358
+                y: 1368,     // 82% × 1668 ≈ 1368
                 unlocked: false,
                 description: '1111111',
                 resources: ['星辉珍珠', '珊瑚符文石', '幻光水母触须'],
@@ -534,10 +555,10 @@
         ];
 
         // ================================================================
-        // 以下代码为交互逻辑，你一般不需要修改
+        // 以下为交互逻辑，一般不需要修改
         // ================================================================
 
-                const mapWrapper = document.getElementById('mapWrapper');
+        const mapWrapper = document.getElementById('mapWrapper');
         const mapContainer = document.getElementById('mapContainer');
         const regionListEl = document.getElementById('regionList');
         const modalOverlay = document.getElementById('modalOverlay');
@@ -551,6 +572,7 @@
         const sidebar = document.getElementById('sidebar');
 
         let currentScale = 1;
+        let baseScale = 1;       // 初始适配缩放比例
         let translateX = 0;
         let translateY = 0;
         let isDragging = false;
@@ -559,17 +581,21 @@
 
         function updateMapTransform() {
             mapContainer.style.transform = `translate(${translateX}px, ${translateY}px) scale(${currentScale})`;
-        }
+ 	   // ✅ 图标反向缩放，保持视觉大小
+ 	   document.querySelectorAll('.marker img').forEach(img => {
+	        img.style.transform = `scale(${1 / currentScale})`;
+ 	   });
+	}
 
         function resetView() {
-            currentScale = 1;
+            currentScale = baseScale;
             translateX = 0;
             translateY = 0;
             updateMapTransform();
         }
 
         function zoomIn() {
-            const newScale = Math.min(currentScale * 1.3, 5);
+            const newScale = Math.min(currentScale * 1.3, baseScale * 5);
             if (newScale !== currentScale) {
                 currentScale = newScale;
                 updateMapTransform();
@@ -577,11 +603,71 @@
         }
 
         function zoomOut() {
-            const newScale = Math.max(currentScale / 1.3, 0.3);
+            const newScale = Math.max(currentScale / 1.3, baseScale * 0.3);
             if (newScale !== currentScale) {
                 currentScale = newScale;
                 updateMapTransform();
             }
+        }
+
+        // ---------- ✅ 渲染地图拼图 ----------
+        function renderMapPieces() {
+            mapContainer.innerHTML = '';
+
+            // 计算整体地图的总宽高
+            let maxX = 0, maxY = 0;
+            let minX = 0, minY = 0;
+            mapPieces.forEach(piece => {
+                maxX = Math.max(maxX, piece.x + piece.width);
+                maxY = Math.max(maxY, piece.y + piece.height);
+                minX = Math.min(minX, piece.x);
+                minY = Math.min(minY, piece.y);
+            });
+
+            const totalW = maxX - minX;
+            const totalH = maxY - minY;
+
+            // 设置容器尺寸
+            mapContainer.style.width = totalW + 'px';
+            mapContainer.style.height = totalH + 'px';
+
+            // 如果地图有偏移（有负坐标的图），整体平移一下
+            mapContainer.style.left = (-minX) + 'px';
+            mapContainer.style.top = (-minY) + 'px';
+
+            // 添加每张图片
+            mapPieces.forEach(piece => {
+                const img = document.createElement('img');
+                img.src = piece.file;
+                img.className = 'map-piece';
+                img.style.left = (piece.x - minX) + 'px';
+                img.style.top = (piece.y - minY) + 'px';
+                img.style.width = piece.width + 'px';
+                img.style.height = piece.height + 'px';
+                img.onerror = function() {
+                    this.style.background = '#2d3e3a';
+                    this.alt = '图片加载失败：' + piece.file;
+                };
+                mapContainer.appendChild(img);
+            });
+
+            // 自动缩放适配屏幕
+            fitMapToScreen(totalW, totalH);
+        }
+
+        // ---------- ✅ 自动适配屏幕 ----------
+        function fitMapToScreen(mapWidth, mapHeight) {
+            const wrapperW = mapWrapper.clientWidth;
+            const wrapperH = mapWrapper.clientHeight;
+
+            const scaleX = wrapperW / mapWidth;
+            const scaleY = wrapperH / mapHeight;
+            baseScale = Math.min(scaleX, scaleY) * 0.95;   // 留一点边距
+
+            currentScale = baseScale;
+            translateX = (wrapperW - mapWidth * baseScale) / 2;
+            translateY = (wrapperH - mapHeight * baseScale) / 2;
+            updateMapTransform();
         }
 
         function renderMarkers(highlightIds = []) {
@@ -596,15 +682,19 @@
                 const marker = document.createElement('div');
                 marker.className = 'marker';
                 marker.dataset.regionId = region.id;
-                marker.style.left = region.x + '%';
-                marker.style.top = region.y + '%';
+                marker.style.left = region.x + 'px';   // ✅ 像素定位
+                marker.style.top = region.y + 'px';    // ✅ 像素定位
 
                 const img = document.createElement('img');
-                img.src = region.icon || 'icon/sign.png';
-                img.alt = region.name;
+		img.src = region.icon || 'icon/sign.png';
+		img.alt = region.name;
+		// ✅ 反向缩放，让图标在地图缩小时保持视觉大小
+		img.style.width = '32px';
+		img.style.height = '32px';
+		img.style.transform = `scale(${1 / currentScale})`;
+		img.style.transformOrigin = 'center center';
                 marker.appendChild(img);
 
-                // 手机端用 touchend 替代 click，避免与拖拽冲突
                 marker.addEventListener('touchend', (e) => {
                     e.preventDefault();
                     e.stopPropagation();
@@ -633,7 +723,7 @@
             let html = '';
             visibleRegions.forEach(region => {
                 const isHighlight = highlightIds.includes(region.id);
-		const bgStyle = isHighlight ? 'background: #1b8cff; border-color: #1b8cff; color: #ffffff;' : '';
+                const bgStyle = isHighlight ? 'background: #1b8cff; border-color: #1b8cff; color: #ffffff;' : '';
                 html += `
                     <div class="region-item" data-id="${region.id}" style="${bgStyle}">
                         <span>${region.name}</span>
@@ -648,15 +738,21 @@
                     const id = item.dataset.id;
                     const region = regionsData.find(r => r.id === id);
                     if (region) {
-                        resetView();
+                        // 跳转到该点位：把地图居中到该点位
+                        const wrapperW = mapWrapper.clientWidth;
+                        const wrapperH = mapWrapper.clientHeight;
+                        translateX = wrapperW / 2 - region.x * currentScale;
+                        translateY = wrapperH / 2 - region.y * currentScale;
+                        updateMapTransform();
                         openModal(id);
                         document.querySelectorAll('.region-item').forEach(el => {
                             el.style.background = '';
                             el.style.borderColor = 'transparent';
+                            el.style.color = '';
                         });
                         item.style.background = '#1b8cff';
-			item.style.borderColor = '#1b8cff';
-			item.style.color = '#ffffff';
+                        item.style.borderColor = '#1b8cff';
+                        item.style.color = '#ffffff';
                         if (window.innerWidth <= 700) sidebar.classList.remove('open');
                     }
                 });
@@ -770,7 +866,7 @@
         function onWheel(e) {
             e.preventDefault();
             const delta = e.deltaY > 0 ? 0.9 : 1.1;
-            const newScale = Math.min(Math.max(currentScale * delta, 0.3), 5);
+            const newScale = Math.min(Math.max(currentScale * delta, baseScale * 0.3), baseScale * 5);
             if (newScale !== currentScale) {
                 currentScale = newScale;
                 updateMapTransform();
@@ -779,23 +875,14 @@
 
         // ---- 初始化 ----
         function init() {
-            // 确保地图背景图加载成功
-            const bgImage = new Image();
-            bgImage.src = 'map/map1.png';
-            bgImage.onerror = function() {
-                mapContainer.style.background = '#2d3e3a';
-                mapContainer.innerHTML = `
-                    <div style="display:flex;align-items:center;justify-content:center;height:100%;color:#f0ebe1;font-size:1.4rem;text-align:center;padding:20px;">
-                        🗺️ 请将地图图片（map1.png）放在同目录下
-                    </div>
-                `;
-            };
+            // 1. 渲染地图拼图
+            renderMapPieces();
 
+            // 2. 渲染点位和侧边栏
             renderMarkers([]);
             renderSidebar([]);
-            resetView();
 
-            // 事件绑定
+            // 3. 事件绑定
             mapWrapper.addEventListener('mousedown', onDragStart);
             window.addEventListener('mousemove', onDragMove);
             window.addEventListener('mouseup', onDragEnd);
@@ -804,7 +891,7 @@
             window.addEventListener('touchend', onDragEnd, { passive: false });
             mapWrapper.addEventListener('wheel', onWheel, { passive: false });
 
-            // 手机双指缩放（pinch）
+            // 手机双指缩放
             let lastTouchDist = 0;
             mapWrapper.addEventListener('touchstart', (e) => {
                 if (e.touches.length === 2) {
@@ -822,7 +909,7 @@
                     const dist = Math.sqrt(dx * dx + dy * dy);
                     if (lastTouchDist > 0) {
                         const scaleFactor = dist / lastTouchDist;
-                        const newScale = Math.min(Math.max(currentScale * scaleFactor, 0.3), 5);
+                        const newScale = Math.min(Math.max(currentScale * scaleFactor, baseScale * 0.3), baseScale * 5);
                         if (newScale !== currentScale) {
                             currentScale = newScale;
                             updateMapTransform();
@@ -836,19 +923,27 @@
                 lastTouchDist = 0;
             }, { passive: true });
 
+            // 窗口大小变化时重新适配
+            window.addEventListener('resize', () => {
+                let maxX = 0, maxY = 0, minX = 0, minY = 0;
+                mapPieces.forEach(p => {
+                    maxX = Math.max(maxX, p.x + p.width);
+                    maxY = Math.max(maxY, p.y + p.height);
+                    minX = Math.min(minX, p.x);
+                    minY = Math.min(minY, p.y);
+                });
+                fitMapToScreen(maxX - minX, maxY - minY);
+            });
+
             document.getElementById('zoomInBtn').addEventListener('click', zoomIn);
             document.getElementById('zoomOutBtn').addEventListener('click', zoomOut);
 
-            // ✅ 弹窗关闭 —— 统一处理，不会冲突
             modalCloseBtn.addEventListener('click', function(e) {
                 e.stopPropagation();
                 closeModal();
             });
-
             modalOverlay.addEventListener('click', function(e) {
-                if (e.target === modalOverlay) {
-                    closeModal();
-                }
+                if (e.target === modalOverlay) closeModal();
             });
 
             searchBtn.addEventListener('click', performSearch);
@@ -860,7 +955,6 @@
             sidebarToggle.addEventListener('click', () => {
                 sidebar.classList.toggle('open');
             });
-
             document.addEventListener('click', (e) => {
                 if (window.innerWidth <= 700) {
                     if (!sidebar.contains(e.target) && e.target !== sidebarToggle) {
@@ -870,21 +964,23 @@
             });
 
             // ============================================================
-            // 🧭 坐标拾取器（调试用）— 取消注释下方代码即可启用
+            // 🧭 坐标拾取器（调试用）— 取消注释即可启用
+            //    点击地图任意位置，会弹窗显示该位置的像素坐标
             // ============================================================
             /*
             mapContainer.addEventListener('click', function(e) {
                 const rect = mapContainer.getBoundingClientRect();
-                const x = ((e.clientX - rect.left) / rect.width) * 100;
-                const y = ((e.clientY - rect.top) / rect.height) * 100;
-                const msg = `📍 点击位置坐标:\nx = ${x.toFixed(1)}\ny = ${y.toFixed(1)}`;
+                // 换算成原始地图坐标（不受缩放影响）
+                const x = (e.clientX - rect.left) / currentScale;
+                const y = (e.clientY - rect.top) / currentScale;
+                const msg = `📍 像素坐标:\nx = ${Math.round(x)}\ny = ${Math.round(y)}`;
                 console.log(msg);
                 alert(msg);
             });
             */
 
             console.log('✅ 异世界地图加载完成！');
-            console.log('📍 坐标范围 x, y 均为 0~100，分别表示从左/上开始的百分比。');
+            console.log('📍 点位坐标现在是像素，相对于整体大地图。');
         }
 
         if (document.readyState === 'loading') {

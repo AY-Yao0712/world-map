@@ -4,10 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>您拨打的用户不在服务区 · 异世界地图</title>
+    
+    <!-- ✅ 引入你的专属数据文件 -->
+    <script src="data.js"></script>
+
     <style>
-        /* ============================================================
-           📝 你可以改这里：整体配色、字体、弹窗样式
-           ============================================================ */
         * {
             margin: 0;
             padding: 0;
@@ -22,9 +23,10 @@
             overflow: hidden;
             display: flex;
             flex-direction: column;
+            /* 🖱️ 如果你有自定义鼠标，取消下面这行的注释 */
+            /* cursor: url('icon/cursor.png'), auto; */
         }
 
-        /* ---- 顶部标题栏 ---- */
         .header {
             background: #1b8cff;
             color: #ffffff;
@@ -92,7 +94,6 @@
             background: #f0f0f0;
         }
 
-        /* ---- 主体布局 ---- */
         .main-container {
             display: flex;
             flex: 1;
@@ -100,7 +101,6 @@
             position: relative;
         }
 
-        /* 侧边栏 */
         .sidebar {
             width: 220px;
             background: #f7f9fc;
@@ -150,7 +150,6 @@
             margin-left: auto;
         }
 
-        /* ---- 地图容器 ---- */
         .map-wrapper {
             flex: 1;
             position: relative;
@@ -163,7 +162,6 @@
             cursor: grabbing;
         }
 
-        /* ✅ 地图拼图容器：尺寸由 JS 动态设置，不再是100% */
         #mapContainer {
             position: absolute;
             top: 0;
@@ -172,7 +170,6 @@
             will-change: transform;
         }
 
-        /* ✅ 每张小地图的样式 */
         .map-piece {
             position: absolute;
             display: block;
@@ -181,7 +178,6 @@
             -webkit-user-drag: none;
         }
 
-        /* ---- 点位标记 ---- */
         .marker {
             position: absolute;
             transform: translate(-50%, -50%);
@@ -204,7 +200,6 @@
             pointer-events: none;
         }
 
-        /* ---- 弹窗 ---- */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -310,7 +305,6 @@
             margin-top: 6px;
         }
 
-        /* ---- 左上角指南针 ---- */
         .compass-icon {
             position: absolute;
             top: 16px;
@@ -328,7 +322,6 @@
             display: block;
         }
 
-        /* ---- 地图控制按钮 ---- */
         .map-controls {
             position: absolute;
             bottom: 24px;
@@ -360,7 +353,6 @@
             transform: scale(0.94);
         }
 
-        /* ---- 移动端 ---- */
         .sidebar-toggle {
             display: none;
             background: #2c3e3f;
@@ -432,12 +424,10 @@
         </aside>
 
         <div class="map-wrapper" id="mapWrapper">
-            <!-- 🧭 指南针（纯装饰） -->
             <div class="compass-icon">
                 <img src="compass.png" alt="指南针">
             </div>
 
-            <!-- ✅ 地图拼图容器（内容由 JS 自动填充） -->
             <div id="mapContainer"></div>
 
             <div class="map-controls">
@@ -447,7 +437,6 @@
         </div>
     </div>
 
-    <!-- 弹窗 -->
     <div class="modal-overlay" id="modalOverlay">
         <div class="modal-box" id="modalBox">
             <div class="modal-header">
@@ -459,105 +448,6 @@
     </div>
 
     <script>
-        // ================================================================
-        // 📝 【配置区 1】地图拼图 —— 以后加新图就在这里加一行
-        //    规则：
-        //    - 图1 的左上角永远是 (0, 0)
-        //    - 想在下方加图2：x 不变，y = 图1 的高度
-        //    - 想在右方加图3：x = 图1 的宽度，y 不变
-        //    - 想在左方加图4：x = 负数（图1宽度的负数），y 不变
-        //    - 想在上方加图5：x 不变，y = 负数（图1高度的负数）
-        // ================================================================
-        const mapPieces = [
-            {
-                file: 'map/map1.png',   // 图片路径
-                x: 0,                    // 左上角 X 坐标（像素）
-                y: 0,                    // 左上角 Y 坐标（像素）
-                width: 2388,             // 图片宽度（像素）
-                height: 1668             // 图片高度（像素）
-            },
-            {
-                file: 'map/map2.png',
-                x: 0,                  
-                y: 1610,               
-                width: 2388,           
-                height: 1668           
-            },
-        ];
-
-        // ================================================================
-        // 📝 【配置区 2】区域数据 —— 增、删、改都在这里
-        //    ⚠️ 坐标单位是像素（相对于整体大地图）
-        //    换算公式：像素X = 百分比 × 地图宽 ÷ 100
-        //             像素Y = 百分比 × 地图高 ÷ 100
-        // ================================================================
-        const regionsData = [
-            {
-                id: 'mistwood',
-                name: '一个很大的湖',
-                icon: 'icon/water.png',
-                x: 525,      // 22% × 2388 ≈ 525
-                y: 1201,     // 72% × 1668 ≈ 1201
-                unlocked: true,
-                description: '一片很大的湖，看起来很深，钓鱼佬狂喜。',
-                resources: ['石头', '苔藓', '水草'],
-                creatures: ['鱼', '很多鱼', '不同品种的鱼', '水元素'],
-                dangerLevel: 3
-            },
-            {
-                id: 'windplain',
-                name: '附近最高最平缓的山',
-                icon: 'icon/sign.png',
-                x: 406,      // 17% × 2388 ≈ 406
-                y: 167,      // 10% × 1668 ≈ 167
-                unlocked: true,
-                description: '视野开阔。',
-                resources: ['雨林树', '苔藓', '藤蔓'],
-                creatures: ['待定'],
-                dangerLevel: 4
-            },
-            {
-                id: 'frostspire',
-                name: '湖畔的出生点',
-                icon: 'icon/safe.png',
-                x: 955,      // 40% × 2388 ≈ 955
-                y: 1234,     // 74% × 1668 ≈ 1234
-                unlocked: true,
-                description: '终年氤氲薄雾，空气高湿温热。地表覆盖厚层苔藓、淤积腐殖泥，林木临水丛生，河湖支流纵横交错。地形平缓，是新手探索的理想起点。',
-                resources: ['P0001', 'P0002', 'P0003'],
-                creatures: ['A0001？', 'A0002', 'A0003'],
-                dangerLevel: 1
-            },
-            {
-                id: 'emberglow',
-                name: '一片沼泽地',
-                icon: 'icon/special.png',
-                x: 1672,     // 70% × 2388 ≈ 1672
-                y: 1434,     // 86% × 1668 ≈ 1434
-                unlocked: true,
-                description: '湖泊下游淤积形成的淡水沼泽，常年积水、土壤泥泞。腐殖质丰厚，大量腐生生物在此繁衍，生态循环里重要的分解区域。',
-                resources: ['沼泥树脂', '粘液', '腐败的……？'],
-                creatures: ['水蛇？', '白蚁？', '渡鸦？'],
-                dangerLevel: 4
-            },
-            {
-                id: 'duskshore',
-                name: '暮光群岛',
-                icon: 'icon/sign.png',
-                x: 358,      // 15% × 2388 ≈ 358
-                y: 1368,     // 82% × 1668 ≈ 1368
-                unlocked: false,
-                description: '1111111',
-                resources: ['星辉珍珠', '珊瑚符文石', '幻光水母触须'],
-                creatures: ['人鱼祭司', '礁石海蛇', '虹彩鹦鹉螺'],
-                dangerLevel: 3
-            }
-        ];
-
-        // ================================================================
-        // 以下为交互逻辑，一般不需要修改
-        // ================================================================
-
         const mapWrapper = document.getElementById('mapWrapper');
         const mapContainer = document.getElementById('mapContainer');
         const regionListEl = document.getElementById('regionList');
@@ -572,7 +462,7 @@
         const sidebar = document.getElementById('sidebar');
 
         let currentScale = 1;
-        let baseScale = 1;       // 初始适配缩放比例
+        let baseScale = 1;
         let translateX = 0;
         let translateY = 0;
         let isDragging = false;
@@ -581,93 +471,74 @@
 
         function updateMapTransform() {
             mapContainer.style.transform = `translate(${translateX}px, ${translateY}px) scale(${currentScale})`;
- 	   // ✅ 图标反向缩放，保持视觉大小
- 	   document.querySelectorAll('.marker img').forEach(img => {
-	        img.style.transform = `scale(${1 / currentScale})`;
- 	   });
-	}
+            document.querySelectorAll('.marker img').forEach(img => {
+                img.style.transform = `scale(${1 / currentScale})`;
+            });
+        }
 
+        // ✅ 优化了中心点计算：支持负坐标和多图拼接时的完美居中
         function resetView() {
             currentScale = baseScale;
-            translateX = 0;
-            translateY = 0;
+            const wrapperW = mapWrapper.clientWidth;
+            const wrapperH = mapWrapper.clientHeight;
+            
+            let maxX = -Infinity, maxY = -Infinity, minX = Infinity, minY = Infinity;
+            mapPieces.forEach(p => {
+                maxX = Math.max(maxX, p.x + p.width);
+                maxY = Math.max(maxY, p.y + p.height);
+                minX = Math.min(minX, p.x);
+                minY = Math.min(minY, p.y);
+            });
+            const totalW = maxX - minX;
+            const totalH = maxY - minY;
+
+            translateX = (wrapperW - totalW * baseScale) / 2;
+            translateY = (wrapperH - totalH * baseScale) / 2;
             updateMapTransform();
         }
 
-        function zoomIn() {
-            const newScale = Math.min(currentScale * 1.3, baseScale * 5);
-            if (newScale !== currentScale) {
-                currentScale = newScale;
-                updateMapTransform();
-            }
-        }
-
-        function zoomOut() {
-            const newScale = Math.max(currentScale / 1.3, baseScale * 0.3);
-            if (newScale !== currentScale) {
-                currentScale = newScale;
-                updateMapTransform();
-            }
-        }
-
-        // ---------- ✅ 渲染地图拼图 ----------
         function renderMapPieces() {
             mapContainer.innerHTML = '';
 
-            // 计算整体地图的总宽高
-            let maxX = 0, maxY = 0;
-            let minX = 0, minY = 0;
+            let maxX = 0, maxY = 0, minX = 0, minY = 0;
             mapPieces.forEach(piece => {
                 maxX = Math.max(maxX, piece.x + piece.width);
                 maxY = Math.max(maxY, piece.y + piece.height);
                 minX = Math.min(minX, piece.x);
                 minY = Math.min(minY, piece.y);
             });
-
             const totalW = maxX - minX;
             const totalH = maxY - minY;
 
-            // 设置容器尺寸
+            // 容器宽高为总体宽高
             mapContainer.style.width = totalW + 'px';
             mapContainer.style.height = totalH + 'px';
+            
+            // ❌ 删掉了之前的 left = -minX，改为在放图片时统一减去 minX/minY
+            mapContainer.style.left = '0px';
+            mapContainer.style.top = '0px';
 
-            // 如果地图有偏移（有负坐标的图），整体平移一下
-            mapContainer.style.left = (-minX) + 'px';
-            mapContainer.style.top = (-minY) + 'px';
-
-            // 添加每张图片
             mapPieces.forEach(piece => {
                 const img = document.createElement('img');
                 img.src = piece.file;
                 img.className = 'map-piece';
+                // 统一减去 minX 和 minY，保证所有图片都在正数坐标区域内
                 img.style.left = (piece.x - minX) + 'px';
                 img.style.top = (piece.y - minY) + 'px';
                 img.style.width = piece.width + 'px';
                 img.style.height = piece.height + 'px';
-                img.onerror = function() {
-                    this.style.background = '#2d3e3a';
-                    this.alt = '图片加载失败：' + piece.file;
-                };
                 mapContainer.appendChild(img);
             });
 
-            // 自动缩放适配屏幕
             fitMapToScreen(totalW, totalH);
         }
-
-        // ---------- ✅ 自动适配屏幕 ----------
         function fitMapToScreen(mapWidth, mapHeight) {
             const wrapperW = mapWrapper.clientWidth;
             const wrapperH = mapWrapper.clientHeight;
-
             const scaleX = wrapperW / mapWidth;
             const scaleY = wrapperH / mapHeight;
-            baseScale = Math.min(scaleX, scaleY) * 0.95;   // 留一点边距
-
-            currentScale = baseScale;
-            translateX = (wrapperW - mapWidth * baseScale) / 2;
-            translateY = (wrapperH - mapHeight * baseScale) / 2;
-            updateMapTransform();
+            baseScale = Math.min(scaleX, scaleY) * 0.85;
+            resetView();
         }
 
         function renderMarkers(highlightIds = []) {
@@ -678,21 +549,25 @@
                 visibleRegions = visibleRegions.filter(r => highlightIds.includes(r.id));
             }
 
+            // 找出当前地图的最小边界，以便正确放置带负数坐标的点
+            let minX = Infinity, minY = Infinity;
+            mapPieces.forEach(p => {
+                minX = Math.min(minX, p.x);
+                minY = Math.min(minY, p.y);
+            });
+
             visibleRegions.forEach(region => {
                 const marker = document.createElement('div');
                 marker.className = 'marker';
                 marker.dataset.regionId = region.id;
-                marker.style.left = region.x + 'px';   // ✅ 像素定位
-                marker.style.top = region.y + 'px';    // ✅ 像素定位
+                // 点位的 x/y 是地图上的原始坐标，所以要减去地图边界偏移
+                marker.style.left = (region.x - minX) + 'px';
+                marker.style.top = (region.y - minY) + 'px';
 
                 const img = document.createElement('img');
-		img.src = region.icon || 'icon/sign.png';
-		img.alt = region.name;
-		// ✅ 反向缩放，让图标在地图缩小时保持视觉大小
-		img.style.width = '32px';
-		img.style.height = '32px';
-		img.style.transform = `scale(${1 / currentScale})`;
-		img.style.transformOrigin = 'center center';
+                img.src = region.icon || 'icon/sign.png';
+                img.alt = region.name;
+                img.style.transform = `scale(${1 / currentScale})`;
                 marker.appendChild(img);
 
                 marker.addEventListener('touchend', (e) => {
@@ -738,12 +613,20 @@
                     const id = item.dataset.id;
                     const region = regionsData.find(r => r.id === id);
                     if (region) {
-                        // 跳转到该点位：把地图居中到该点位
+                        let minX = Infinity, minY = Infinity;
+                        mapPieces.forEach(p => {
+                            minX = Math.min(minX, p.x);
+                            minY = Math.min(minY, p.y);
+                        });
+
                         const wrapperW = mapWrapper.clientWidth;
                         const wrapperH = mapWrapper.clientHeight;
-                        translateX = wrapperW / 2 - region.x * currentScale;
-                        translateY = wrapperH / 2 - region.y * currentScale;
+                        
+                        // 居中到该点
+                        translateX = wrapperW / 2 - (region.x - minX) * currentScale;
+                        translateY = wrapperH / 2 - (region.y - minY) * currentScale;
                         updateMapTransform();
+                        
                         openModal(id);
                         document.querySelectorAll('.region-item').forEach(el => {
                             el.style.background = '';
@@ -832,7 +715,6 @@
             closeModal();
         }
 
-        // ---- 拖拽 ----
         function onDragStart(e) {
             if (e.touches && e.touches.length > 1) return;
             e.preventDefault();
@@ -867,22 +749,25 @@
             e.preventDefault();
             const delta = e.deltaY > 0 ? 0.9 : 1.1;
             const newScale = Math.min(Math.max(currentScale * delta, baseScale * 0.3), baseScale * 5);
+            
             if (newScale !== currentScale) {
+                const rect = mapContainer.getBoundingClientRect();
+                const mouseX = (e.clientX - rect.left) / currentScale;
+                const mouseY = (e.clientY - rect.top) / currentScale;
+
                 currentScale = newScale;
+                translateX = e.clientX - mapWrapper.offsetLeft - mouseX * currentScale;
+                translateY = e.clientY - mapWrapper.offsetTop - mouseY * currentScale;
+
                 updateMapTransform();
             }
         }
 
-        // ---- 初始化 ----
         function init() {
-            // 1. 渲染地图拼图
             renderMapPieces();
-
-            // 2. 渲染点位和侧边栏
             renderMarkers([]);
             renderSidebar([]);
 
-            // 3. 事件绑定
             mapWrapper.addEventListener('mousedown', onDragStart);
             window.addEventListener('mousemove', onDragMove);
             window.addEventListener('mouseup', onDragEnd);
@@ -891,13 +776,17 @@
             window.addEventListener('touchend', onDragEnd, { passive: false });
             mapWrapper.addEventListener('wheel', onWheel, { passive: false });
 
-            // 手机双指缩放
             let lastTouchDist = 0;
+            let pinchCenterX = 0;
+            let pinchCenterY = 0;
+
             mapWrapper.addEventListener('touchstart', (e) => {
                 if (e.touches.length === 2) {
                     const dx = e.touches[0].clientX - e.touches[1].clientX;
                     const dy = e.touches[0].clientY - e.touches[1].clientY;
                     lastTouchDist = Math.sqrt(dx * dx + dy * dy);
+                    pinchCenterX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+                    pinchCenterY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
                 }
             }, { passive: true });
 
@@ -907,11 +796,20 @@
                     const dx = e.touches[0].clientX - e.touches[1].clientX;
                     const dy = e.touches[0].clientY - e.touches[1].clientY;
                     const dist = Math.sqrt(dx * dx + dy * dy);
+                    
                     if (lastTouchDist > 0) {
                         const scaleFactor = dist / lastTouchDist;
                         const newScale = Math.min(Math.max(currentScale * scaleFactor, baseScale * 0.3), baseScale * 5);
+                        
                         if (newScale !== currentScale) {
+                            const rect = mapContainer.getBoundingClientRect();
+                            const touchX = (pinchCenterX - rect.left) / currentScale;
+                            const touchY = (pinchCenterY - rect.top) / currentScale;
+
                             currentScale = newScale;
+                            translateX = pinchCenterX - mapWrapper.offsetLeft - touchX * currentScale;
+                            translateY = pinchCenterY - mapWrapper.offsetTop - touchY * currentScale;
+
                             updateMapTransform();
                         }
                     }
@@ -923,9 +821,8 @@
                 lastTouchDist = 0;
             }, { passive: true });
 
-            // 窗口大小变化时重新适配
             window.addEventListener('resize', () => {
-                let maxX = 0, maxY = 0, minX = 0, minY = 0;
+                let maxX = -Infinity, maxY = -Infinity, minX = Infinity, minY = Infinity;
                 mapPieces.forEach(p => {
                     maxX = Math.max(maxX, p.x + p.width);
                     maxY = Math.max(maxY, p.y + p.height);
@@ -935,8 +832,39 @@
                 fitMapToScreen(maxX - minX, maxY - minY);
             });
 
-            document.getElementById('zoomInBtn').addEventListener('click', zoomIn);
-            document.getElementById('zoomOutBtn').addEventListener('click', zoomOut);
+            document.getElementById('zoomInBtn').addEventListener('click', () => {
+                const wrapperW = mapWrapper.clientWidth;
+                const wrapperH = mapWrapper.clientHeight;
+                const cx = wrapperW / 2;
+                const cy = wrapperH / 2;
+                const newScale = Math.min(currentScale * 1.3, baseScale * 5);
+                if(newScale !== currentScale){
+                    const rect = mapContainer.getBoundingClientRect();
+                    const mapX = (cx - rect.left) / currentScale;
+                    const mapY = (cy - rect.top) / currentScale;
+                    currentScale = newScale;
+                    translateX = cx - mapX * currentScale;
+                    translateY = cy - mapY * currentScale;
+                    updateMapTransform();
+                }
+            });
+
+            document.getElementById('zoomOutBtn').addEventListener('click', () => {
+                const wrapperW = mapWrapper.clientWidth;
+                const wrapperH = mapWrapper.clientHeight;
+                const cx = wrapperW / 2;
+                const cy = wrapperH / 2;
+                const newScale = Math.max(currentScale / 1.3, baseScale * 0.3);
+                if(newScale !== currentScale){
+                    const rect = mapContainer.getBoundingClientRect();
+                    const mapX = (cx - rect.left) / currentScale;
+                    const mapY = (cy - rect.top) / currentScale;
+                    currentScale = newScale;
+                    translateX = cx - mapX * currentScale;
+                    translateY = cy - mapY * currentScale;
+                    updateMapTransform();
+                }
+            });
 
             modalCloseBtn.addEventListener('click', function(e) {
                 e.stopPropagation();
@@ -962,25 +890,6 @@
                     }
                 }
             });
-
-            // ============================================================
-            // 🧭 坐标拾取器（调试用）— 取消注释即可启用
-            //    点击地图任意位置，会弹窗显示该位置的像素坐标
-            // ============================================================
-            /*
-            mapContainer.addEventListener('click', function(e) {
-                const rect = mapContainer.getBoundingClientRect();
-                // 换算成原始地图坐标（不受缩放影响）
-                const x = (e.clientX - rect.left) / currentScale;
-                const y = (e.clientY - rect.top) / currentScale;
-                const msg = `📍 像素坐标:\nx = ${Math.round(x)}\ny = ${Math.round(y)}`;
-                console.log(msg);
-                alert(msg);
-            });
-            */
-
-            console.log('✅ 异世界地图加载完成！');
-            console.log('📍 点位坐标现在是像素，相对于整体大地图。');
         }
 
         if (document.readyState === 'loading') {
@@ -988,6 +897,34 @@
         } else {
             init();
         }
+// ==========================================
+// 🧭 坐标拾取器（开发调试专用）
+/*
+document.addEventListener('DOMContentLoaded', () => {
+    // 稍微延迟一下，等地图渲染完再绑定
+    setTimeout(() => {
+        const mapContainer = document.getElementById('mapContainer');
+        if (!mapContainer) return;
+        
+        mapContainer.addEventListener('click', function(e) {
+            // 计算当前真实的缩放比例，确保坐标精确
+            const transform = window.getComputedStyle(mapContainer).transform;
+            const matrix = new DOMMatrix(transform);
+            const currentScale = matrix.a; // 获取当前的 scale 值
+
+            const rect = mapContainer.getBoundingClientRect();
+            
+            // 换算成地图原图上的真实像素坐标
+            const x = (e.clientX - rect.left) / currentScale;
+            const y = (e.clientY - rect.top) / currentScale;
+
+            const msg = `📍 当前位置像素坐标:\nx = ${Math.round(x)}\ny = ${Math.round(y)}\n\n直接复制这两个数字填到区域数据里吧！`;
+            console.log(msg);
+            alert(msg);
+        });
+    }, 500); // 延迟500毫秒
+});
+*/
     </script>
 </body>
 </html>

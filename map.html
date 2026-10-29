@@ -9,393 +9,135 @@
     <script src="data.js"></script>
 
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
-            background: #f0f2f5;
-            color: #1b2a3a;
-            height: 100vh;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            /* 🖱️ 如果你有自定义鼠标，取消下面这行的注释 */
-            /* cursor: url('icon/cursor.png'), auto; */
+            background: #f0f2f5; color: #1b2a3a; height: 100vh;
+            overflow: hidden; display: flex; flex-direction: column;
         }
-
         .header {
-            background: #1b8cff;
-            color: #ffffff;
-            padding: 8px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-shrink: 0;
-            border-bottom: 2px solid #ffffff30;
-            z-index: 10;
-            flex-wrap: wrap;
-            gap: 6px 12px;
+            background: #1b8cff; color: #ffffff; padding: 8px 20px;
+            display: flex; justify-content: space-between; align-items: center;
+            flex-shrink: 0; border-bottom: 2px solid #ffffff30; z-index: 10; flex-wrap: wrap; gap: 6px 12px;
         }
         .header h1 {
-            font-size: 1.2rem;
-            font-weight: 400;
-            letter-spacing: 2px;
-            background: rgba(255, 255, 255, 0.06);
-            padding: 4px 14px;
-            border-radius: 30px;
-            border-left: 3px solid #b8a07c;
-            white-space: nowrap;
+            font-size: 1.2rem; font-weight: 400; letter-spacing: 2px;
+            background: rgba(255, 255, 255, 0.06); padding: 4px 14px;
+            border-radius: 30px; border-left: 3px solid #b8a07c; white-space: nowrap;
         }
-        .header .search-box {
-            display: flex;
-            gap: 6px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
+        .header .search-box { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
         .header .search-box input {
-            padding: 8px 18px;
-            border-radius: 30px;
-            border: none;
-            background: #ffffff;
-            font-size: 0.9rem;
-            width: 180px;
-            outline: 1px solid #d0d0d0;
-            transition: 0.2s;
+            padding: 8px 18px; border-radius: 30px; border: none; background: #ffffff;
+            font-size: 0.9rem; width: 180px; outline: 1px solid #d0d0d0; transition: 0.2s;
         }
-        .header .search-box input:focus {
-            outline: 2px solid #b8a07c;
-            background: #fffcf5;
-        }
+        .header .search-box input:focus { outline: 2px solid #b8a07c; background: #fffcf5; }
         .header .search-box button {
-            padding: 6px 16px;
-            border: none;
-            border-radius: 30px;
-            background: #ffffff;
-            color: #1b8cff;
-            font-weight: 500;
-            cursor: pointer;
-            transition: 0.15s;
-            font-size: 0.85rem;
-            border: 1px solid #d0d8e0;
+            padding: 6px 16px; border: none; border-radius: 30px; background: #ffffff;
+            color: #1b8cff; font-weight: 500; cursor: pointer; transition: 0.15s;
+            font-size: 0.85rem; border: 1px solid #d0d8e0;
         }
-        .header .search-box button:hover {
-            background: #eef2f7;
-        }
-        .header .search-box .clear-btn {
-            background: #ffffff;
-            color: #7a8a9a;
-            border: 1px solid #d0d8e0;
-        }
-        .header .search-box .clear-btn:hover {
-            background: #f0f0f0;
-        }
-
-        .main-container {
-            display: flex;
-            flex: 1;
-            overflow: hidden;
-            position: relative;
-        }
-
+        .header .search-box button:hover { background: #eef2f7; }
+        .header .search-box .clear-btn { background: #ffffff; color: #7a8a9a; border: 1px solid #d0d8e0; }
+        .header .search-box .clear-btn:hover { background: #f0f0f0; }
+        .main-container { display: flex; flex: 1; overflow: hidden; position: relative; }
         .sidebar {
-            width: 220px;
-            background: #f7f9fc;
-            border-right: 1px solid #e8ecf0;
-            overflow-y: auto;
-            flex-shrink: 0;
-            padding: 12px 10px;
-            transition: transform 0.25s ease;
-            z-index: 5;
-            box-shadow: 2px 0 12px rgba(0,0,0,0.06);
+            width: 220px; background: #f7f9fc; border-right: 1px solid #e8ecf0;
+            overflow-y: auto; flex-shrink: 0; padding: 12px 10px; transition: transform 0.25s ease;
+            z-index: 5; box-shadow: 2px 0 12px rgba(0,0,0,0.06);
         }
         .sidebar h3 {
-            font-size: 0.95rem;
-            color: #1b2a3a;
-            border-bottom: 1px solid #e8ecf0;
-            padding-bottom: 8px;
-            margin-bottom: 12px;
-            letter-spacing: 1px;
-            font-weight: 600;
+            font-size: 0.95rem; color: #1b2a3a; border-bottom: 1px solid #e8ecf0;
+            padding-bottom: 8px; margin-bottom: 12px; letter-spacing: 1px; font-weight: 600;
         }
         .sidebar .region-item {
-            background: #ffffff;
-            margin-bottom: 6px;
-            padding: 8px 14px;
-            border-radius: 12px;
-            font-size: 0.85rem;
-            cursor: pointer;
-            border: 1px solid #e8ecf0;
-            transition: 0.1s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+            background: #ffffff; margin-bottom: 6px; padding: 8px 14px; border-radius: 12px;
+            font-size: 0.85rem; cursor: pointer; border: 1px solid #e8ecf0; transition: 0.1s;
+            display: flex; align-items: center; gap: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);
         }
-        .sidebar .region-item:hover {
-            background: #eef2f7;
-            border-color: #c0c8d4;
-            transform: translateX(4px);
-        }
+        .sidebar .region-item:hover { background: #eef2f7; border-color: #c0c8d4; transform: translateX(4px); }
         .sidebar .region-item .badge {
-            font-size: 0.7rem;
-            background: #e8ecf0;
-            color: #4a5a6a;
-            border-radius: 30px;
-            padding: 0 10px;
-            line-height: 1.8;
-            margin-left: auto;
+            font-size: 0.7rem; background: #e8ecf0; color: #4a5a6a; border-radius: 30px;
+            padding: 0 10px; line-height: 1.8; margin-left: auto;
         }
-
         .map-wrapper {
-            flex: 1;
-            position: relative;
-            overflow: hidden;
-            background: #f0f2f5;
-            cursor: grab;
-            touch-action: none;
+            flex: 1; position: relative; overflow: hidden; background: #f0f2f5;
+            cursor: grab; touch-action: none;
         }
-        .map-wrapper:active {
-            cursor: grabbing;
-        }
-
-        #mapContainer {
-            position: absolute;
-            top: 0;
-            left: 0;
-            transform-origin: 0 0;
-            will-change: transform;
-        }
-
+        .map-wrapper:active { cursor: grabbing; }
+        #mapContainer { position: absolute; top: 0; left: 0; transform-origin: 0 0; will-change: transform; }
         .map-piece {
-            position: absolute;
-            display: block;
-            pointer-events: none;
-            user-select: none;
-            -webkit-user-drag: none;
+            position: absolute; display: block; pointer-events: none;
+            user-select: none; -webkit-user-drag: none;
         }
-
         .marker {
-            position: absolute;
-            transform: translate(-50%, -50%);
-            width: 32px;
-            height: 32px;
-            cursor: pointer;
-            z-index: 20;
-            transition: transform 0.1s, filter 0.15s;
-            pointer-events: auto;
+            position: absolute; transform: translate(-50%, -50%); width: 32px; height: 32px;
+            cursor: pointer; z-index: 20; transition: transform 0.1s, filter 0.15s; pointer-events: auto;
         }
-        .marker:hover {
-            transform: translate(-50%, -50%) scale(1.25);
-            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.7));
-            z-index: 30;
-        }
-        .marker img {
-            width: 100%;
-            height: 100%;
-            display: block;
-            pointer-events: none;
-        }
-
+        .marker:hover { transform: translate(-50%, -50%) scale(1.25); filter: drop-shadow(0 4px 8px rgba(0,0,0,0.7)); z-index: 30; }
+        .marker img { width: 100%; height: 100%; display: block; pointer-events: none; }
         .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(2px);
-            z-index: 999;
-            display: none;
-            justify-content: center;
-            align-items: center;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(2px); z-index: 999;
+            display: none; justify-content: center; align-items: center;
         }
-        .modal-overlay.active {
-            display: flex;
-        }
+        .modal-overlay.active { display: flex; }
         .modal-box {
-            position: relative;
-            max-width: 520px;
-            width: 90%;
-            max-height: 80vh;
-            background: #ffffff;
-            border-radius: 24px;
-            box-shadow: 0 12px 40px rgba(0,0,0,0.25);
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            animation: modalFade 0.25s ease;
+            position: relative; max-width: 520px; width: 90%; max-height: 80vh;
+            background: #ffffff; border-radius: 24px; box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+            overflow: hidden; display: flex; flex-direction: column; animation: modalFade 0.25s ease;
         }
-        @keyframes modalFade {
-            0% { opacity: 0.6; transform: scale(0.92) translateY(10px); }
-            100% { opacity: 1; transform: scale(1) translateY(0); }
-        }
+        @keyframes modalFade { 0% { opacity: 0.6; transform: scale(0.92) translateY(10px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
         .modal-header {
-            background: #f5f7fa;
-            padding: 14px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #e8ecf0;
-            flex-shrink: 0;
+            background: #f5f7fa; padding: 14px 20px; display: flex;
+            justify-content: space-between; align-items: center;
+            border-bottom: 1px solid #e8ecf0; flex-shrink: 0;
         }
-        .modal-header h2 {
-            font-size: 1.3rem;
-            font-weight: 600;
-            color: #1b2a3a;
-            letter-spacing: 1px;
-        }
+        .modal-header h2 { font-size: 1.3rem; font-weight: 600; color: #1b2a3a; letter-spacing: 1px; }
         .modal-close {
-            background: none;
-            border: none;
-            font-size: 1.8rem;
-            cursor: pointer;
-            color: #4a3f32;
-            line-height: 1;
-            padding: 0 6px;
-            transition: 0.15s;
+            background: none; border: none; font-size: 1.8rem; cursor: pointer;
+            color: #4a3f32; line-height: 1; padding: 0 6px; transition: 0.15s;
         }
-        .modal-close:hover {
-            transform: rotate(90deg);
-            color: #a04030;
-        }
-        .modal-body {
-            padding: 18px 22px 22px;
-            overflow-y: auto;
-            flex: 1;
-        }
-        .modal-body .desc {
-            font-size: 0.98rem;
-            line-height: 1.6;
-            margin-bottom: 14px;
-            color: #2c3e3f;
-        }
+        .modal-close:hover { transform: rotate(90deg); color: #a04030; }
+        .modal-body { padding: 18px 22px 22px; overflow-y: auto; flex: 1; }
+        .modal-body .desc { font-size: 0.98rem; line-height: 1.6; margin-bottom: 14px; color: #2c3e3f; }
         .modal-body .section-title {
-            font-weight: 600;
-            margin-top: 12px;
-            margin-bottom: 4px;
-            color: #4a5a3a;
-            border-left: 4px solid #6a7a7a;
-            padding-left: 10px;
-            font-size: 0.95rem;
+            font-weight: 600; margin-top: 12px; margin-bottom: 4px; color: #4a5a3a;
+            border-left: 4px solid #6a7a7a; padding-left: 10px; font-size: 0.95rem;
         }
-        .modal-body .tag-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px 10px;
-            margin: 4px 0 8px 14px;
-        }
-        .modal-body .tag-list span {
-            background: #f0f2f5;
-            padding: 2px 12px;
-            border-radius: 30px;
-            font-size: 0.85rem;
-            color: #2c3e3f;
-        }
-        .modal-body .danger-level {
-            display: inline-block;
-            background: #1b8cff;
-            color: #ffffff;
-            padding: 2px 14px;
-            border-radius: 30px;
-            font-size: 0.8rem;
-            margin-top: 6px;
-        }
-
+        .modal-body .tag-list { display: flex; flex-wrap: wrap; gap: 6px 10px; margin: 4px 0 8px 14px; }
+        .modal-body .tag-list span { background: #f0f2f5; padding: 2px 12px; border-radius: 30px; font-size: 0.85rem; color: #2c3e3f; }
+        .modal-body .danger-level { display: inline-block; background: #1b8cff; color: #ffffff; padding: 2px 14px; border-radius: 30px; font-size: 0.8rem; margin-top: 6px; }
         .compass-icon {
-            position: absolute;
-            top: 16px;
-            left: 16px;
-            z-index: 40;
-            width: 44px;
-            height: 44px;
-            pointer-events: none;
-            opacity: 0.85;
-            filter: drop-shadow(0 2px 6px rgba(0,0,0,0.2));
+            position: absolute; top: 16px; left: 16px; z-index: 40; width: 44px; height: 44px;
+            pointer-events: none; opacity: 0.85; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.2));
         }
-        .compass-icon img {
-            width: 100%;
-            height: 100%;
-            display: block;
-        }
-
+        .compass-icon img { width: 100%; height: 100%; display: block; }
         .map-controls {
-            position: absolute;
-            bottom: 24px;
-            right: 24px;
-            z-index: 40;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
+            position: absolute; bottom: 24px; right: 24px; z-index: 40;
+            display: flex; flex-direction: column; gap: 6px;
         }
         .map-controls button {
-            width: 42px;
-            height: 42px;
-            border: none;
-            border-radius: 40px;
-            background: #ffffff;
-            color: #1b8cff;
-            font-size: 1.2rem;
-            cursor: pointer;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-            transition: 0.15s;
-            border: 1px solid #d0d8e0;
-            font-weight: bold;
+            width: 42px; height: 42px; border: none; border-radius: 40px; background: #ffffff;
+            color: #1b8cff; font-size: 1.2rem; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            transition: 0.15s; border: 1px solid #d0d8e0; font-weight: bold;
         }
-        .map-controls button:hover {
-            background: #eef2f7;
-            transform: scale(1.05);
-        }
-        .map-controls button:active {
-            transform: scale(0.94);
-        }
-
+        .map-controls button:hover { background: #eef2f7; transform: scale(1.05); }
+        .map-controls button:active { transform: scale(0.94); }
         .sidebar-toggle {
-            display: none;
-            background: #2c3e3f;
-            color: #f0ebe1;
-            border: none;
-            padding: 4px 12px;
-            border-radius: 30px;
-            font-size: 0.9rem;
-            cursor: pointer;
-            border: 1px solid #5a6f6b;
+            display: none; background: #2c3e3f; color: #f0ebe1; border: none;
+            padding: 4px 12px; border-radius: 30px; font-size: 0.9rem; cursor: pointer; border: 1px solid #5a6f6b;
         }
         @media (max-width: 700px) {
             .sidebar {
-                position: absolute;
-                top: 0;
-                left: 0;
-                height: 100%;
-                transform: translateX(-110%);
-                width: 200px;
-                z-index: 50;
-                background: #f7f9fc;
-                box-shadow: 4px 0 20px rgba(0,0,0,0.15);
-                border-right: 1px solid #e8ecf0;
+                position: absolute; top: 0; left: 0; height: 100%; transform: translateX(-110%);
+                width: 200px; z-index: 50; background: #f7f9fc; box-shadow: 4px 0 20px rgba(0,0,0,0.15); border-right: 1px solid #e8ecf0;
             }
-            .sidebar.open {
-                transform: translateX(0);
-            }
-            .sidebar-toggle {
-                display: inline-block;
-            }
-            .header h1 {
-                font-size: 1rem;
-                white-space: normal;
-            }
-            .header .search-box input {
-                width: 120px;
-            }
-            .modal-box {
-                max-width: 96%;
-                max-height: 90vh;
-            }
+            .sidebar.open { transform: translateX(0); }
+            .sidebar-toggle { display: inline-block; }
+            .header h1 { font-size: 1rem; white-space: normal; }
+            .header .search-box input { width: 120px; }
+            .modal-box { max-width: 96%; max-height: 90vh; }
         }
-
         .hidden { display: none !important; }
         .text-muted { color: #5a6f6b; font-size: 0.85rem; }
     </style>
@@ -431,8 +173,7 @@
             <div id="mapContainer"></div>
 
             <div class="map-controls">
-                <button id="zoomInBtn">➕</button>
-                <button id="zoomOutBtn">➖</button>
+                <button id="resetViewBtn" title="复位地图">🔄</button>
             </div>
         </div>
     </div>
@@ -468,6 +209,10 @@
         let isDragging = false;
         let dragStartX, dragStartY, dragStartTranslateX, dragStartTranslateY;
         let highlightedIds = [];
+        
+        // ✅ 新增：全局地图边界，坐标拾取和渲染点位都靠它
+        let mapMinX = 0;
+        let mapMinY = 0;
 
         function updateMapTransform() {
             mapContainer.style.transform = `translate(${translateX}px, ${translateY}px) scale(${currentScale})`;
@@ -476,7 +221,6 @@
             });
         }
 
-        // ✅ 优化了中心点计算：支持负坐标和多图拼接时的完美居中
         function resetView() {
             currentScale = baseScale;
             const wrapperW = mapWrapper.clientWidth;
@@ -500,7 +244,7 @@
         function renderMapPieces() {
             mapContainer.innerHTML = '';
 
-            let maxX = 0, maxY = 0, minX = 0, minY = 0;
+            let maxX = -Infinity, maxY = -Infinity, minX = Infinity, minY = Infinity;
             mapPieces.forEach(piece => {
                 maxX = Math.max(maxX, piece.x + piece.width);
                 maxY = Math.max(maxY, piece.y + piece.height);
@@ -510,11 +254,12 @@
             const totalW = maxX - minX;
             const totalH = maxY - minY;
 
-            // 容器宽高为总体宽高
+            // ✅ 保存全局边界
+            mapMinX = minX;
+            mapMinY = minY;
+
             mapContainer.style.width = totalW + 'px';
             mapContainer.style.height = totalH + 'px';
-            
-            // ❌ 删掉了之前的 left = -minX，改为在放图片时统一减去 minX/minY
             mapContainer.style.left = '0px';
             mapContainer.style.top = '0px';
 
@@ -522,7 +267,6 @@
                 const img = document.createElement('img');
                 img.src = piece.file;
                 img.className = 'map-piece';
-                // 统一减去 minX 和 minY，保证所有图片都在正数坐标区域内
                 img.style.left = (piece.x - minX) + 'px';
                 img.style.top = (piece.y - minY) + 'px';
                 img.style.width = piece.width + 'px';
@@ -532,6 +276,7 @@
 
             fitMapToScreen(totalW, totalH);
         }
+
         function fitMapToScreen(mapWidth, mapHeight) {
             const wrapperW = mapWrapper.clientWidth;
             const wrapperH = mapWrapper.clientHeight;
@@ -549,20 +294,13 @@
                 visibleRegions = visibleRegions.filter(r => highlightIds.includes(r.id));
             }
 
-            // 找出当前地图的最小边界，以便正确放置带负数坐标的点
-            let minX = Infinity, minY = Infinity;
-            mapPieces.forEach(p => {
-                minX = Math.min(minX, p.x);
-                minY = Math.min(minY, p.y);
-            });
-
             visibleRegions.forEach(region => {
                 const marker = document.createElement('div');
                 marker.className = 'marker';
                 marker.dataset.regionId = region.id;
-                // 点位的 x/y 是地图上的原始坐标，所以要减去地图边界偏移
-                marker.style.left = (region.x - minX) + 'px';
-                marker.style.top = (region.y - minY) + 'px';
+                
+                marker.style.left = (region.x - mapMinX) + 'px';
+                marker.style.top = (region.y - mapMinY) + 'px';
 
                 const img = document.createElement('img');
                 img.src = region.icon || 'icon/sign.png';
@@ -613,18 +351,11 @@
                     const id = item.dataset.id;
                     const region = regionsData.find(r => r.id === id);
                     if (region) {
-                        let minX = Infinity, minY = Infinity;
-                        mapPieces.forEach(p => {
-                            minX = Math.min(minX, p.x);
-                            minY = Math.min(minY, p.y);
-                        });
-
                         const wrapperW = mapWrapper.clientWidth;
                         const wrapperH = mapWrapper.clientHeight;
                         
-                        // 居中到该点
-                        translateX = wrapperW / 2 - (region.x - minX) * currentScale;
-                        translateY = wrapperH / 2 - (region.y - minY) * currentScale;
+                        translateX = wrapperW / 2 - (region.x - mapMinX) * currentScale;
+                        translateY = wrapperH / 2 - (region.y - mapMinY) * currentScale;
                         updateMapTransform();
                         
                         openModal(id);
@@ -745,6 +476,7 @@
             }
         }
 
+        // ✅ 电脑滚轮随心所欲缩放（以鼠标为基准）
         function onWheel(e) {
             e.preventDefault();
             const delta = e.deltaY > 0 ? 0.9 : 1.1;
@@ -756,8 +488,8 @@
                 const mouseY = (e.clientY - rect.top) / currentScale;
 
                 currentScale = newScale;
-                translateX = e.clientX - mapWrapper.offsetLeft - mouseX * currentScale;
-                translateY = e.clientY - mapWrapper.offsetTop - mouseY * currentScale;
+                translateX = e.clientX - mapWrapper.getBoundingClientRect().left - mouseX * currentScale;
+                translateY = e.clientY - mapWrapper.getBoundingClientRect().top - mouseY * currentScale;
 
                 updateMapTransform();
             }
@@ -776,6 +508,7 @@
             window.addEventListener('touchend', onDragEnd, { passive: false });
             mapWrapper.addEventListener('wheel', onWheel, { passive: false });
 
+            // ✅ 手机双指缩放（以双指中心为基准）
             let lastTouchDist = 0;
             let pinchCenterX = 0;
             let pinchCenterY = 0;
@@ -807,8 +540,8 @@
                             const touchY = (pinchCenterY - rect.top) / currentScale;
 
                             currentScale = newScale;
-                            translateX = pinchCenterX - mapWrapper.offsetLeft - touchX * currentScale;
-                            translateY = pinchCenterY - mapWrapper.offsetTop - touchY * currentScale;
+                            translateX = pinchCenterX - mapWrapper.getBoundingClientRect().left - touchX * currentScale;
+                            translateY = pinchCenterY - mapWrapper.getBoundingClientRect().top - touchY * currentScale;
 
                             updateMapTransform();
                         }
@@ -817,9 +550,7 @@
                 }
             }, { passive: false });
 
-            mapWrapper.addEventListener('touchend', () => {
-                lastTouchDist = 0;
-            }, { passive: true });
+            mapWrapper.addEventListener('touchend', () => { lastTouchDist = 0; }, { passive: true });
 
             window.addEventListener('resize', () => {
                 let maxX = -Infinity, maxY = -Infinity, minX = Infinity, minY = Infinity;
@@ -832,64 +563,29 @@
                 fitMapToScreen(maxX - minX, maxY - minY);
             });
 
-            document.getElementById('zoomInBtn').addEventListener('click', () => {
-                const wrapperW = mapWrapper.clientWidth;
-                const wrapperH = mapWrapper.clientHeight;
-                const cx = wrapperW / 2;
-                const cy = wrapperH / 2;
-                const newScale = Math.min(currentScale * 1.3, baseScale * 5);
-                if(newScale !== currentScale){
-                    const rect = mapContainer.getBoundingClientRect();
-                    const mapX = (cx - rect.left) / currentScale;
-                    const mapY = (cy - rect.top) / currentScale;
-                    currentScale = newScale;
-                    translateX = cx - mapX * currentScale;
-                    translateY = cy - mapY * currentScale;
-                    updateMapTransform();
-                }
-            });
-
-            document.getElementById('zoomOutBtn').addEventListener('click', () => {
-                const wrapperW = mapWrapper.clientWidth;
-                const wrapperH = mapWrapper.clientHeight;
-                const cx = wrapperW / 2;
-                const cy = wrapperH / 2;
-                const newScale = Math.max(currentScale / 1.3, baseScale * 0.3);
-                if(newScale !== currentScale){
-                    const rect = mapContainer.getBoundingClientRect();
-                    const mapX = (cx - rect.left) / currentScale;
-                    const mapY = (cy - rect.top) / currentScale;
-                    currentScale = newScale;
-                    translateX = cx - mapX * currentScale;
-                    translateY = cy - mapY * currentScale;
-                    updateMapTransform();
-                }
-            });
-
-            modalCloseBtn.addEventListener('click', function(e) {
+            // ✅ 复位按钮（拦截点击穿透）
+            const resetBtn = document.getElementById('resetViewBtn');
+            resetBtn.addEventListener('mousedown', (e) => e.stopPropagation());
+            resetBtn.addEventListener('touchstart', (e) => e.stopPropagation());
+            resetBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
-                closeModal();
-            });
-            modalOverlay.addEventListener('click', function(e) {
-                if (e.target === modalOverlay) closeModal();
+                resetView();
             });
 
+            modalCloseBtn.addEventListener('click', function(e) { e.stopPropagation(); closeModal(); });
+            modalOverlay.addEventListener('click', function(e) { if (e.target === modalOverlay) closeModal(); });
             searchBtn.addEventListener('click', performSearch);
-            searchInput.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter') performSearch();
-            });
+            searchInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') performSearch(); });
             clearSearchBtn.addEventListener('click', clearSearch);
 
-            sidebarToggle.addEventListener('click', () => {
-                sidebar.classList.toggle('open');
-            });
+            sidebarToggle.addEventListener('click', () => { sidebar.classList.toggle('open'); });
             document.addEventListener('click', (e) => {
                 if (window.innerWidth <= 700) {
-                    if (!sidebar.contains(e.target) && e.target !== sidebarToggle) {
-                        sidebar.classList.remove('open');
-                    }
+                    if (!sidebar.contains(e.target) && e.target !== sidebarToggle) { sidebar.classList.remove('open'); }
                 }
             });
+
+
         }
 
         if (document.readyState === 'loading') {
@@ -897,34 +593,6 @@
         } else {
             init();
         }
-// ==========================================
-// 🧭 坐标拾取器（开发调试专用）
-/*
-document.addEventListener('DOMContentLoaded', () => {
-    // 稍微延迟一下，等地图渲染完再绑定
-    setTimeout(() => {
-        const mapContainer = document.getElementById('mapContainer');
-        if (!mapContainer) return;
-        
-        mapContainer.addEventListener('click', function(e) {
-            // 计算当前真实的缩放比例，确保坐标精确
-            const transform = window.getComputedStyle(mapContainer).transform;
-            const matrix = new DOMMatrix(transform);
-            const currentScale = matrix.a; // 获取当前的 scale 值
-
-            const rect = mapContainer.getBoundingClientRect();
-            
-            // 换算成地图原图上的真实像素坐标
-            const x = (e.clientX - rect.left) / currentScale;
-            const y = (e.clientY - rect.top) / currentScale;
-
-            const msg = `📍 当前位置像素坐标:\nx = ${Math.round(x)}\ny = ${Math.round(y)}\n\n直接复制这两个数字填到区域数据里吧！`;
-            console.log(msg);
-            alert(msg);
-        });
-    }, 500); // 延迟500毫秒
-});
-*/
     </script>
 </body>
 </html>

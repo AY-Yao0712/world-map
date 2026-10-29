@@ -216,11 +216,19 @@
 
         function updateMapTransform() {
             mapContainer.style.transform = `translate(${translateX}px, ${translateY}px) scale(${currentScale})`;
-            document.querySelectorAll('.marker img').forEach(img => {
-                img.style.transform = `scale(${1 / currentScale})`;
+            
+            // ✅ 让点位图标的尺寸和点击区域跟着地图缩放反向变化
+            document.querySelectorAll('.marker').forEach(marker => {
+                // 1. 反向缩放，让点击区域（透明框）和图标一样大
+                marker.style.transform = `translate(-50%, -50%) scale(${1 / currentScale})`;
+                
+                // 2. 里面的图片不用再单独缩放，直接填满父级即可
+                const img = marker.querySelector('img');
+                if(img) {
+                    img.style.transform = 'scale(1)'; 
+                }
             });
         }
-
         function resetView() {
             currentScale = baseScale;
             const wrapperW = mapWrapper.clientWidth;
